@@ -1,7 +1,4 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { getUser } from "@/lib/supabase/server";
-import { SignOutButton } from "./sign-out-button";
 
 const NAV = [
   { href: "/generate", label: "Cook" },
@@ -11,10 +8,7 @@ const NAV = [
   { href: "/settings", label: "Taste" },
 ];
 
-export default async function AppLayout({ children }: LayoutProps<"/">) {
-  const user = await getUser();
-  if (!user) redirect("/login");
-
+export default function AppLayout({ children }: LayoutProps<"/">) {
   return (
     <>
       <header className="sticky top-0 z-20 bg-paper border-b border-rule">
@@ -33,7 +27,6 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
               </Link>
             ))}
           </nav>
-          <SignOutButton />
         </div>
       </header>
       <main className="flex-1 mx-auto w-full max-w-3xl px-5 py-8">{children}</main>

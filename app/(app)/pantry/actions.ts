@@ -1,7 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createClient, getUser } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
+import { OWNER_ID } from "@/lib/owner";
 import { addPantryItem, removePantryItem } from "@/lib/db";
 import { parseIngredientLine } from "@/lib/parse";
 
@@ -13,9 +14,6 @@ import { parseIngredientLine } from "@/lib/parse";
  * lentils" lands with its quantity intact rather than as a literal name.
  */
 export async function addItems(formData: FormData) {
-  const user = await getUser();
-  if (!user) throw new Error("Not signed in.");
-
   const raw = String(formData.get("items") ?? "");
   const lines = raw
     .split(/[,\n]/)
@@ -27,7 +25,7 @@ export async function addItems(formData: FormData) {
   for (const line of lines) {
     const parsed = parseIngredientLine(line);
     const name = parsed.item || line;
-    await addPantryItem(supabase, user.id, {
+    await addPantryItem(supabase, OWNER_ID, {
       name,
       qty: parsed.qty,
       unit: parsed.unit,

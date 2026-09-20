@@ -1,21 +1,11 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createClient, getUser, canGenerate } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
+import { OWNER_ID } from "@/lib/owner";
 import { getTasteProfile, listPantry } from "@/lib/db";
 import { buildSubstitutionPrompt, buildSystemInstruction } from "@/lib/prompt";
 import { GeminiUnavailableError, SUBSTITUTION_SCHEMA, generateJson } from "@/lib/gemini";
 
 export async function POST(request: NextRequest) {
-  const user = await getUser();
-  if (!user) {
-    return NextResponse.json({ error: "Sign in first." }, { status: 401 });
-  }
-  if (!canGenerate(user.email)) {
-    return NextResponse.json(
-      { error: "Substitutions are limited to this instance's owner." },
-      { status: 403 },
-    );
-  }
-
   const { ingredient, recipeTitle } = await request.json();
   if (!ingredient) {
     return NextResponse.json({ error: "No ingredient given." }, { status: 400 });
@@ -23,7 +13,7 @@ export async function POST(request: NextRequest) {
 
   const supabase = await createClient();
   const [profile, pantry] = await Promise.all([
-    getTasteProfile(supabase, user.id),
+    getTasteProfile(supabase, OWNER_ID),
     listPantry(supabase),
   ]);
 

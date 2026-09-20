@@ -1,12 +1,12 @@
-import { createClient, getUser } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
+import { OWNER_ID } from "@/lib/owner";
 import { getTasteProfile } from "@/lib/db";
 import { saveProfile } from "./actions";
 import { SaveButton } from "@/app/(app)/save-button";
 
 export default async function SettingsPage() {
-  const user = await getUser();
   const supabase = await createClient();
-  const profile = await getTasteProfile(supabase, user!.id);
+  const profile = await getTasteProfile(supabase, OWNER_ID);
 
   return (
     <div className="max-w-xl">

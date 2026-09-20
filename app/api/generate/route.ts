@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createClient, getUser, canGenerate } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
+import { OWNER_ID } from "@/lib/owner";
 import { getTasteProfile, listPantry } from "@/lib/db";
 import { buildSystemInstruction, buildUserPrompt, type GenerationRequest } from "@/lib/prompt";
 import {
@@ -10,24 +11,6 @@ import {
 } from "@/lib/gemini";
 
 export async function POST(request: NextRequest) {
-  const user = await getUser();
-  if (!user) {
-    return NextResponse.json({ error: "Sign in to generate recipes." }, { status: 401 });
-  }
-
-  // The deployed URL is public, so generation is gated to an allowlist. Anyone
-  // else can sign in and browse, but cannot spend the API quota.
-  if (!canGenerate(user.email)) {
-    return NextResponse.json(
-      {
-        error:
-          "This is a personal instance, so recipe generation is limited to its owner. " +
-          "You can still browse saved recipes.",
-      },
-      { status: 403 },
-    );
-  }
-
   let body: GenerationRequest;
   try {
     body = await request.json();
@@ -37,7 +20,7 @@ export async function POST(request: NextRequest) {
 
   const supabase = await createClient();
   const [profile, pantry] = await Promise.all([
-    getTasteProfile(supabase, user.id),
+    getTasteProfile(supabase, OWNER_ID),
     listPantry(supabase),
   ]);
 

@@ -24,7 +24,7 @@ const MODES: { id: Mode; label: string; blurb: string }[] = [
   { id: "text", label: "Paste", blurb: "Paste the text and it gets formatted." },
 ];
 
-export function ImportClient({ allowed }: { allowed: boolean }) {
+export function ImportClient() {
   const [mode, setMode] = useState<Mode>("url");
   const [url, setUrl] = useState("");
   const [text, setText] = useState("");
@@ -145,16 +145,11 @@ export function ImportClient({ allowed }: { allowed: boolean }) {
         <button
           onClick={runImport}
           className="btn btn-primary"
-          disabled={loading || !ready || !allowed}
+          disabled={loading || !ready}
         >
           {loading ? "Reading" : "Read recipe"}
         </button>
 
-        {!allowed && (
-          <p className="text-sm text-ink-soft mt-3 leading-relaxed">
-            Importing is limited to this instance&apos;s owner.
-          </p>
-        )}
         {error && <p className="text-madder text-sm mt-4 leading-relaxed">{error}</p>}
       </div>
     </div>

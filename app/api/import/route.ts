@@ -1,5 +1,4 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getUser, canGenerate } from "@/lib/supabase/server";
 import { recipeFromHtml, stripHtml } from "@/lib/jsonld";
 import {
   GeminiUnavailableError,
@@ -89,15 +88,6 @@ async function fromImage(dataUrl: string): Promise<DraftRecipe> {
 }
 
 export async function POST(request: NextRequest) {
-  const user = await getUser();
-  if (!user) return NextResponse.json({ error: "Sign in first." }, { status: 401 });
-  if (!canGenerate(user.email)) {
-    return NextResponse.json(
-      { error: "Importing is limited to this instance's owner." },
-      { status: 403 },
-    );
-  }
-
   let body: { type?: string; url?: string; text?: string; image?: string };
   try {
     body = await request.json();

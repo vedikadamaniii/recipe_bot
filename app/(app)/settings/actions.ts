@@ -1,7 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createClient, getUser } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
+import { OWNER_ID } from "@/lib/owner";
 import { saveTasteProfile } from "@/lib/db";
 import type { TasteProfile } from "@/lib/schema";
 
@@ -14,13 +15,10 @@ function parseList(value: FormDataEntryValue | null): string[] {
 }
 
 export async function saveProfile(formData: FormData) {
-  const user = await getUser();
-  if (!user) throw new Error("Not signed in.");
-
   const spice = String(formData.get("spiceLevel") ?? "");
 
   const profile: TasteProfile = {
-    userId: user.id,
+    userId: OWNER_ID,
     summary: String(formData.get("summary") ?? "").trim(),
     allergies: parseList(formData.get("allergies")),
     dislikes: parseList(formData.get("dislikes")),

@@ -23,11 +23,9 @@ const INTENTS = [
 export function GenerateClient({
   pantryCount,
   hasProfile,
-  allowed,
 }: {
   pantryCount: number;
   hasProfile: boolean;
-  allowed: boolean;
 }) {
   const [ask, setAsk] = useState("");
   const [intents, setIntents] = useState<string[]>([]);
@@ -155,17 +153,10 @@ export function GenerateClient({
         <button
           onClick={generate}
           className="btn btn-primary"
-          disabled={loading || !allowed}
+          disabled={loading}
         >
           {loading ? "Thinking" : "Suggest recipes"}
         </button>
-
-        {!allowed && (
-          <p className="text-sm text-ink-soft mt-3 leading-relaxed">
-            This is a personal instance — generation is limited to its owner. You
-            can still browse the library.
-          </p>
-        )}
 
         {error && <p className="text-madder text-sm mt-4 leading-relaxed">{error}</p>}
       </div>

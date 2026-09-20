@@ -115,7 +115,13 @@ export async function listRecipes(
   return (data ?? []).map(rowToRecipe);
 }
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function getRecipe(sb: SupabaseClient, id: string): Promise<Recipe | null> {
+  // Postgres raises "invalid input syntax for type uuid" on a malformed id,
+  // which would surface as a 500. A bad id is a missing recipe, not an error.
+  if (!UUID_RE.test(id)) return null;
+
   const { data, error } = await sb.from("recipes").select("*").eq("id", id).maybeSingle();
   if (error) throw new Error(`Could not load recipe: ${error.message}`);
   return data ? rowToRecipe(data) : null;
