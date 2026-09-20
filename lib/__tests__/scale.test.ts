@@ -32,7 +32,7 @@ describe("scaleIngredient", () => {
     const result = scaleIngredient(ing({ item: "flour", qty: 1.5, unit: "cup" }), 3);
     expect(result.scaledQty).toBe(4.5);
     expect(result.scaledUnit).toBe("cup");
-    expect(formatAmount(result.scaledQty, result.scaledUnit)).toBe("4½ cup");
+    expect(formatAmount(result.scaledQty, result.scaledUnit)).toBe("4½ cups");
   });
 
   it("promotes to a larger unit when the number gets unwieldy", () => {

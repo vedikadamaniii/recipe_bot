@@ -4,7 +4,8 @@ import { getTasteProfile } from "@/lib/db";
 import { saveProfile } from "./actions";
 import { SaveButton } from "@/app/(app)/save-button";
 
-export default async function SettingsPage() {
+export default async function SettingsPage({ searchParams }: PageProps<"/settings">) {
+  const saved = "saved" in (await searchParams);
   const supabase = await createClient();
   const profile = await getTasteProfile(supabase, OWNER_ID);
 
@@ -16,7 +17,19 @@ export default async function SettingsPage() {
         context; allergies and dislikes are enforced as hard rules.
       </p>
 
-      <form action={saveProfile} className="space-y-7">
+      {saved && (
+        <p className="text-sm mb-6 border-l-2 border-indigo pl-3">
+          Taste profile saved. Every suggestion from now on uses it.
+        </p>
+      )}
+
+      {/* Keyed to the saved values so the fields always remount from what is
+          actually in the database, rather than keeping stale defaults. */}
+      <form
+        action={saveProfile}
+        key={`${profile.spiceLevel}-${profile.summary.length}-${profile.equipment.join()}`}
+        className="space-y-7"
+      >
         <div>
           <label htmlFor="summary" className="block mb-1">
             How you cook

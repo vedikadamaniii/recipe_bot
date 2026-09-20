@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { OWNER_ID } from "@/lib/owner";
 import { saveTasteProfile } from "@/lib/db";
@@ -31,4 +32,9 @@ export async function saveProfile(formData: FormData) {
   await saveTasteProfile(supabase, profile);
   revalidatePath("/settings");
   revalidatePath("/generate");
+
+  // Redirect rather than fall through, so the form remounts from saved state
+  // and the save is actually confirmed. Without this a successful save looked
+  // identical to no save at all.
+  redirect("/settings?saved=1");
 }

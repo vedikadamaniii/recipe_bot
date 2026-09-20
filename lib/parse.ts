@@ -64,6 +64,18 @@ const UNIT_SYNONYMS: Record<string, Unit> = {
   litres: "l",
 };
 
+/**
+ * UK recipe sites routinely give the same amount twice, metric then imperial:
+ * "800g/1lb 12oz canned chickpeas". The second form is the same quantity in
+ * other units, not extra ingredients, so drop it before parsing.
+ */
+const DUAL_MEASUREMENT =
+  /^(\d+(?:[.,]\d+)?\s*[a-zA-Z]+)\s*\/\s*(?:\d+(?:[.,]\d+)?\s*[a-zA-Z]+\s*)+/;
+
+export function stripDualMeasurement(line: string): string {
+  return line.replace(DUAL_MEASUREMENT, "$1 ");
+}
+
 /** Phrases that mean "no fixed amount". */
 const TO_TASTE = /\b(to taste|as needed|as required|for serving|for garnish)\b/i;
 
@@ -160,7 +172,8 @@ export function parseIngredientLine(line: string): Ingredient {
     return { qty: null, unit: null, item: "", scaling: "linear" };
   }
 
-  const { qty, rest: afterQty } = parseQuantity(original);
+  const cleaned = stripDualMeasurement(original);
+  const { qty, rest: afterQty } = parseQuantity(cleaned);
   const { unit, rest: afterUnit } = qty === null ? { unit: null, rest: afterQty } : parseUnit(afterQty);
 
   let item = afterUnit;

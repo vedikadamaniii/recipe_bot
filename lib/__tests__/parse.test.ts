@@ -6,6 +6,7 @@ import {
   parseQuantity,
   parseUnit,
   parseYield,
+  stripDualMeasurement,
 } from "../parse";
 
 describe("parseQuantity", () => {
@@ -90,6 +91,23 @@ describe("parseIngredientLine", () => {
     expect(r.qty).toBeNull();
     expect(r.rawAmount).toBe("A generous handful of coriander");
     expect(r.item.length).toBeGreaterThan(0);
+  });
+
+  it("handles the metric/imperial double that UK sites write", () => {
+    // "800g/1lb 12oz" is one amount written twice, not two ingredients.
+    const r = parseIngredientLine("800g/1lb 12oz canned chickpeas");
+    expect(r.qty).toBe(800);
+    expect(r.unit).toBe("g");
+    expect(r.item).toBe("canned chickpeas");
+
+    const r2 = parseIngredientLine("1kg/2lb 4oz potatoes, peeled");
+    expect(r2).toMatchObject({ qty: 1, unit: "kg", item: "potatoes", prep: "peeled" });
+  });
+
+  it("does not mangle a lone measurement or a fraction with a slash", () => {
+    expect(stripDualMeasurement("400g canned tomatoes")).toBe("400g canned tomatoes");
+    expect(parseIngredientLine("1/2 tsp salt").qty).toBe(0.5);
+    expect(parseIngredientLine("1 1/2 cups flour").qty).toBe(1.5);
   });
 
   it("survives empty and whitespace input", () => {

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   ConversionError,
   toMeasure,
+  unitLabel,
   canConvert,
   convert,
   convertibleUnits,
@@ -75,6 +76,13 @@ describe("convert — across systems (volume <-> weight)", () => {
 });
 
 describe("normalizeUnit", () => {
+  it("keeps metric decimal rather than promoting to a fraction", () => {
+    // 500 g is how this is written. "0.5 kg" is not.
+    expect(normalizeUnit(500, "g")).toEqual({ qty: 500, unit: "g" });
+    expect(normalizeUnit(500, "ml")).toEqual({ qty: 500, unit: "ml" });
+    expect(normalizeUnit(750, "g")).toEqual({ qty: 750, unit: "g" });
+  });
+
   it("steps up to a readable unit within the same measurement system", () => {
     expect(normalizeUnit(48, "tsp")).toEqual({ qty: 1, unit: "cup" });
     expect(normalizeUnit(1500, "ml")).toEqual({ qty: 1.5, unit: "l" });
@@ -139,6 +147,22 @@ describe("toMeasure", () => {
     expect(toMeasure(250, "ml", "us").unit).toBe("cup");
   });
 
+  it("keeps spoons as spoons when going metric", () => {
+    // "0.6 ml of ground coriander" is arithmetically right and useless in a
+    // kitchen. Metric recipes use tsp and tbsp too; they only write ml for
+    // volumes you would measure in a jug.
+    expect(toMeasure(0.5, "tsp", "metric")).toEqual({ qty: 0.5, unit: "tsp" });
+    expect(toMeasure(1, "tsp", "metric")).toEqual({ qty: 1, unit: "tsp" });
+    expect(toMeasure(1.5, "tbsp", "metric")).toEqual({ qty: 1.5, unit: "tbsp" });
+
+    // Cups are what a metric kitchen actually lacks, so those convert.
+    expect(toMeasure(1, "cup", "metric").unit).toBe("ml");
+    expect(toMeasure(2, "cup", "metric").unit).toBe("ml");
+
+    // And a spoon count large enough to mean a jug does convert.
+    expect(toMeasure(20, "tbsp", "metric").unit).toBe("ml");
+  });
+
   it("switches weight systems", () => {
     expect(toMeasure(1, "lb", "metric")).toEqual({ qty: 453.59237, unit: "g" });
     expect(toMeasure(500, "g", "us").unit).toBe("lb");
@@ -159,5 +183,28 @@ describe("toMeasure", () => {
 
   it("is stable when already in the requested system", () => {
     expect(toMeasure(3, "tbsp", "us")).toEqual({ qty: 3, unit: "tbsp" });
+  });
+});
+
+describe("unitLabel", () => {
+  it("pluralises cups, which are a word rather than an abbreviation", () => {
+    expect(unitLabel(1, "cup")).toBe("cup");
+    expect(unitLabel(2, "cup")).toBe("cups");
+    expect(unitLabel(0.5, "cup")).toBe("cup"); // "½ cup", not "½ cups"
+    expect(unitLabel(1.5, "cup")).toBe("cups");
+  });
+
+  it("leaves abbreviations alone", () => {
+    expect(unitLabel(2, "tbsp")).toBe("tbsp");
+    expect(unitLabel(400, "g")).toBe("g");
+    expect(unitLabel(2, "lb")).toBe("lb");
+  });
+
+  it("is used by formatAmount", () => {
+    expect(formatAmount(2, "cup")).toBe("2 cups");
+    expect(formatAmount(1, "cup")).toBe("1 cup");
+    expect(formatAmount(0.5, "cup")).toBe("\u00BD cup");
+    expect(formatAmount(1.5, "cup")).toBe("1\u00BD cups");
+    expect(formatAmount(500, "g")).toBe("500 g");
   });
 });

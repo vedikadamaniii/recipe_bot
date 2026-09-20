@@ -25,6 +25,8 @@ type UnitMeta = {
   measure: Measure;
   inBase: number;
   label: string;
+  /** Plural label, where the unit is a word rather than an abbreviation. */
+  plural?: string;
   /**
    * Whether `normalizeUnit` may promote a quantity *into* this unit.
    * Fluid ounces are a valid target when you explicitly ask for them, but no
@@ -38,7 +40,14 @@ export const UNITS: Record<Unit, UnitMeta> = {
   tsp: { system: "volume", measure: "us", inBase: TSP_ML, label: "tsp", preferred: true },
   tbsp: { system: "volume", measure: "us", inBase: 3 * TSP_ML, label: "tbsp", preferred: true },
   floz: { system: "volume", measure: "us", inBase: 6 * TSP_ML, label: "fl oz", preferred: false },
-  cup: { system: "volume", measure: "us", inBase: 48 * TSP_ML, label: "cup", preferred: true },
+  cup: {
+    system: "volume",
+    measure: "us",
+    inBase: 48 * TSP_ML,
+    label: "cup",
+    plural: "cups",
+    preferred: true,
+  },
   ml: { system: "volume", measure: "metric", inBase: 1, label: "ml", preferred: true },
   l: { system: "volume", measure: "metric", inBase: 1000, label: "l", preferred: true },
   g: { system: "weight", measure: "metric", inBase: 1, label: "g", preferred: true },
@@ -171,8 +180,11 @@ function round(n: number, dp = 6): number {
  * Bulk units that cooks happily write fractions of. Nobody measures "¼ tbsp",
  * but "½ cup" is on the side of every measuring jug. This is what lets us
  * prefer `½ cup` over the arithmetically identical `8 tbsp`.
+ *
+ * US customary only. Metric is written in decimals and steps down instead:
+ * 500 g stays 500 g rather than becoming "0.5 kg", which nobody writes.
  */
-const FRACTION_FRIENDLY = new Set<Unit>(["cup", "l", "kg", "lb"]);
+const FRACTION_FRIENDLY = new Set<Unit>(["cup", "lb"]);
 
 const NICE_FRACTIONS = [0, 1 / 4, 1 / 3, 1 / 2, 2 / 3, 3 / 4, 1];
 
@@ -264,12 +276,30 @@ export function formatQuantity(qty: number, unit?: Unit | null): string {
   return whole === 0 ? best[1] : `${whole}${best[1]}`;
 }
 
-/** Render a full quantity + unit, e.g. `1½ tbsp`. */
+/** The unit's label, pluralised when the quantity calls for it. */
+export function unitLabel(qty: number, unit: Unit): string {
+  const meta = UNITS[unit];
+  if (!meta.plural) return meta.label;
+  // Recipes write "½ cup" and "2 cups": the plural starts above one, not at
+  // any value other than one.
+  return qty > 1 ? meta.plural : meta.label;
+}
+
+/** Render a full quantity + unit, e.g. `1½ tbsp` or `2 cups`. */
 export function formatAmount(qty: number | null, unit: Unit | null): string {
   if (qty === null) return "";
   if (!unit) return formatQuantity(qty);
-  return `${formatQuantity(qty, unit)} ${UNITS[unit].label}`;
+  return `${formatQuantity(qty, unit)} ${unitLabel(qty, unit)}`;
 }
+
+/**
+ * Teaspoons and tablespoons are universal — metric recipes use them too, and
+ * write millilitres only for larger volumes. So spoons survive a switch to
+ * metric until the amount is big enough that a cook would reach for a jug
+ * instead of a spoon.
+ */
+const SPOON_UNITS = new Set<Unit>(["tsp", "tbsp"]);
+const JUG_THRESHOLD_ML = 240;
 
 /**
  * Re-express a quantity in a given measurement system.
@@ -285,6 +315,14 @@ export function toMeasure(
   measure: Measure,
 ): { qty: number; unit: Unit } {
   if (UNITS[unit].measure === measure) return normalizeUnit(qty, unit);
+
+  // Converting a spoon measure into millilitres gives a technically correct
+  // and useless amount: nobody measures "0.6 ml" of ground coriander, and
+  // "1½ tbsp of ghee" reads better than "22 ml". Cups do convert — those are
+  // the units a metric kitchen does not have.
+  if (measure === "metric" && SPOON_UNITS.has(unit)) {
+    if (convert(qty, unit, "ml") < JUG_THRESHOLD_ML) return { qty, unit };
+  }
 
   const anchor: Record<UnitSystem, Record<Measure, Unit>> = {
     volume: { us: "tsp", metric: "ml" },
