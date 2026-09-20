@@ -7,10 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run",
+    "test": "vitest run --exclude \"**/*.integration.test.ts\" --exclude \"**/node_modules/**\"",
     "test:watch": "vitest",
     "typecheck": "tsc --noEmit",
-    "check:models": "node scripts/check-models.mjs"
+    "check:models": "node scripts/check-models.mjs",
+    "test:live": "vitest run lib/__tests__/gemini.integration.test.ts"
   },
   "dependencies": {
     "@google/genai": "^2.23.0",
