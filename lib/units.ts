@@ -270,3 +270,27 @@ export function formatAmount(qty: number | null, unit: Unit | null): string {
   if (!unit) return formatQuantity(qty);
   return `${formatQuantity(qty, unit)} ${UNITS[unit].label}`;
 }
+
+/**
+ * Re-express a quantity in a given measurement system.
+ *
+ * Note this only ever moves within a system — volume stays volume, weight
+ * stays weight — so it never needs ingredient density and can never fail.
+ * That is what makes a global US/metric toggle safe to offer on every recipe,
+ * unlike a cups-to-grams conversion.
+ */
+export function toMeasure(
+  qty: number,
+  unit: Unit,
+  measure: Measure,
+): { qty: number; unit: Unit } {
+  if (UNITS[unit].measure === measure) return normalizeUnit(qty, unit);
+
+  const anchor: Record<UnitSystem, Record<Measure, Unit>> = {
+    volume: { us: "tsp", metric: "ml" },
+    weight: { us: "oz", metric: "g" },
+  };
+
+  const target = anchor[UNITS[unit].system][measure];
+  return normalizeUnit(convert(qty, unit, target), target);
+}

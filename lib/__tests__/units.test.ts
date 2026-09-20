@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   ConversionError,
+  toMeasure,
   canConvert,
   convert,
   convertibleUnits,
@@ -129,5 +130,34 @@ describe("formatQuantity", () => {
     expect(formatAmount(1, "floz")).toBe("1 fl oz");
     expect(formatAmount(2, null)).toBe("2");
     expect(formatAmount(null, "cup")).toBe("");
+  });
+});
+
+describe("toMeasure", () => {
+  it("switches US volume to metric and back", () => {
+    expect(toMeasure(1, "cup", "metric")).toEqual({ qty: 236.588237, unit: "ml" });
+    expect(toMeasure(250, "ml", "us").unit).toBe("cup");
+  });
+
+  it("switches weight systems", () => {
+    expect(toMeasure(1, "lb", "metric")).toEqual({ qty: 453.59237, unit: "g" });
+    expect(toMeasure(500, "g", "us").unit).toBe("lb");
+  });
+
+  it("never needs a density, so it cannot fail on an unknown ingredient", () => {
+    // The global US/metric toggle is safe on every recipe precisely because it
+    // stays within a system. Volume never becomes weight here.
+    expect(() => toMeasure(1, "cup", "metric")).not.toThrow();
+    expect(toMeasure(1, "cup", "metric").unit).toBe("ml");
+    expect(toMeasure(200, "g", "us").unit).not.toBe("cup");
+  });
+
+  it("normalises the result", () => {
+    expect(toMeasure(2000, "ml", "metric")).toEqual({ qty: 2, unit: "l" });
+    expect(toMeasure(48, "tsp", "us")).toEqual({ qty: 1, unit: "cup" });
+  });
+
+  it("is stable when already in the requested system", () => {
+    expect(toMeasure(3, "tbsp", "us")).toEqual({ qty: 3, unit: "tbsp" });
   });
 });

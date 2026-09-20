@@ -124,6 +124,7 @@ export async function generateJson(options: {
 export {
   GENERATION_SCHEMA,
   SINGLE_RECIPE_SCHEMA,
+  SUBSTITUTION_SCHEMA,
   coerceRecipe,
   parseJsonResponse,
   type GeneratedRecipe,

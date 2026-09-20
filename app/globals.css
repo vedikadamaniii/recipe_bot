@@ -1,26 +1,164 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+/* ---------------------------------------------------------------------------
+   Recipe Bot — "kitchen ledger"
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+   The product's whole thesis is structured quantities, so the measurement is
+   the hero rather than food photography (most saved recipes have no image).
+
+   One rule governs colour: it carries meaning, never decoration. Indigo marks
+   what you can act on and what changed when you scaled. Madder is reserved
+   exclusively for ingredients that need a taste check. Nothing else is
+   coloured, so when something is, it means something.
+--------------------------------------------------------------------------- */
+
+:root {
+  --paper: #edeee8;
+  --paper-raised: #f6f7f3;
+  --ink: #191c15;
+  --ink-soft: #5c6152;
+  --ink-faint: #8d9184;
+  --rule: #d2d4ca;
+  --indigo: #2a3c9b;
+  --indigo-soft: #dfe2f4;
+  --madder: #a33222;
+  --madder-soft: #f4e2de;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --paper: #14170f;
+    --paper-raised: #1d2118;
+    --ink: #e8eae0;
+    --ink-soft: #a3a89a;
+    --ink-faint: #6f7466;
+    --rule: #2f342a;
+    --indigo: #9fb0ff;
+    --indigo-soft: #232a4d;
+    --madder: #e2836f;
+    --madder-soft: #3a211c;
   }
 }
 
+@theme inline {
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-rule: var(--rule);
+  --color-indigo: var(--indigo);
+  --color-indigo-soft: var(--indigo-soft);
+  --color-madder: var(--madder);
+  --color-madder-soft: var(--madder-soft);
+  --font-sans: var(--font-archivo);
+}
+
+html {
+  background: var(--paper);
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-archivo), system-ui, sans-serif;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* The width axis is the emphasis mechanism: quantities are set expanded, like
+   figures stamped on a measuring jug. This is why the type is Archivo. */
+.qty {
+  font-variation-settings: "wdth" 115, "wght" 600;
+  font-feature-settings: "tnum" 1;
+  letter-spacing: -0.01em;
+}
+
+.display {
+  font-variation-settings: "wdth" 112, "wght" 650;
+  letter-spacing: -0.025em;
+  line-height: 1.02;
+}
+
+/* Ledger rules: structure that encodes recipe anatomy rather than decorating. */
+.rule-top {
+  border-top: 1px solid var(--rule);
+}
+
+.field {
+  background: var(--paper-raised);
+  border: 1px solid var(--rule);
+  border-radius: 2px;
+  padding: 0.55rem 0.7rem;
+  color: var(--ink);
+  width: 100%;
+  font: inherit;
+}
+
+.field:focus-visible {
+  outline: 2px solid var(--indigo);
+  outline-offset: -1px;
+  border-color: var(--indigo);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  border-radius: 2px;
+  padding: 0.55rem 0.9rem;
+  font-variation-settings: "wdth" 105, "wght" 600;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+.btn-primary {
+  background: var(--indigo);
+  color: var(--paper);
+}
+@media (prefers-color-scheme: dark) {
+  .btn-primary { color: #14170f; }
+}
+.btn-primary:hover:not(:disabled) { filter: brightness(1.12); }
+
+.btn-quiet {
+  background: transparent;
+  border-color: var(--rule);
+  color: var(--ink);
+}
+.btn-quiet:hover:not(:disabled) { border-color: var(--ink-soft); }
+
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+:where(a, button, input, select, textarea):focus-visible {
+  outline: 2px solid var(--indigo);
+  outline-offset: 2px;
+}
+
+/* A selected filter reads as pressed rather than merely tinted. */
+.chip {
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+  padding: 0.25rem 0.7rem;
+  font-size: 0.82rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+.chip[aria-pressed="true"] {
+  background: var(--indigo);
+  border-color: var(--indigo);
+  color: var(--paper);
+}
+@media (prefers-color-scheme: dark) {
+  .chip[aria-pressed="true"] { color: #14170f; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

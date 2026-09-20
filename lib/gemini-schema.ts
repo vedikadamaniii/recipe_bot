@@ -86,6 +86,33 @@ export const GENERATION_SCHEMA = {
 
 export const SINGLE_RECIPE_SCHEMA = RECIPE_SCHEMA;
 
+export const SUBSTITUTION_SCHEMA = {
+  type: Type.OBJECT,
+  properties: {
+    substitutions: {
+      type: Type.ARRAY,
+      items: {
+        type: Type.OBJECT,
+        properties: {
+          name: { type: Type.STRING, description: "What to use instead." },
+          amount: {
+            type: Type.STRING,
+            description: "How much, relative to the original. e.g. 'the same', '¾ as much'.",
+          },
+          effect: { type: Type.STRING, description: "What it changes about the dish." },
+          caveat: {
+            type: Type.STRING,
+            nullable: true,
+            description: "State plainly when the substitution will not work well.",
+          },
+        },
+        required: ["name", "amount", "effect"],
+      },
+    },
+  },
+  required: ["substitutions"],
+};
+
 /** A generated recipe plus the shopping gap, before it is saved. */
 export type GeneratedRecipe = DraftRecipe & { missingFromPantry: string[] };
 
