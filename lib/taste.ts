@@ -86,7 +86,6 @@ export const PREFER_TO_AVOID: string[] = [
   "zucchini",
   "corn",
   "stuffed vegetables",
-  "bell peppers (never add them by default; occasional deliberate use is fine)",
   "heavy or very creamy dishes",
   "beans as the bulk of a dinner",
   "eggs at breakfast",
