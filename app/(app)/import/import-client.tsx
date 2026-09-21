@@ -6,6 +6,7 @@ import type { DraftRecipe, Recipe } from "@/lib/schema";
 import { COMMON_CUISINES } from "@/lib/schema";
 import { RecipeView } from "@/components/recipe-view";
 import { Knife } from "@/components/ornaments";
+import { approximateBytes, prepareImages } from "@/lib/images";
 import { saveGenerated } from "@/app/(app)/generate/actions";
 
 type Mode = "url" | "image" | "text";
@@ -19,8 +20,10 @@ const MODES: { id: Mode; label: string; blurb: string }[] = [
   },
   {
     id: "image",
-    label: "Photo",
-    blurb: "A screenshot, a cookbook page, or a handwritten card.",
+    label: "Photos",
+    blurb:
+      "Screenshots, a cookbook page, or a handwritten card. Add as many as the " +
+      "recipe takes and they are read together as one, so keep them in order.",
   },
   { id: "text", label: "Paste", blurb: "Paste the text and it gets formatted." },
 ];
@@ -29,18 +32,43 @@ export function ImportClient() {
   const [mode, setMode] = useState<Mode>("url");
   const [url, setUrl] = useState("");
   const [text, setText] = useState("");
-  const [image, setImage] = useState<string | null>(null);
-  const [imageName, setImageName] = useState("");
+  const [shots, setShots] = useState<{ name: string; dataUrl: string }[]>([]);
+  const [preparing, setPreparing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [draft, setDraft] = useState<DraftRecipe | null>(null);
 
-  function pickImage(file: File | undefined) {
-    if (!file) return;
-    setImageName(file.name);
-    const reader = new FileReader();
-    reader.onload = () => setImage(String(reader.result));
-    reader.readAsDataURL(file);
+  async function pickImages(fileList: FileList | null) {
+    const files = Array.from(fileList ?? []);
+    if (files.length === 0) return;
+    setPreparing(true);
+    setError("");
+    try {
+      const prepared = await prepareImages(files);
+      setShots((prev) => [
+        ...prev,
+        ...prepared.map((dataUrl, i) => ({ name: files[i].name, dataUrl })),
+      ]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not read those images.");
+    } finally {
+      setPreparing(false);
+    }
+  }
+
+  function removeShot(index: number) {
+    setShots((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  /** Order matters: ingredients usually come before the method. */
+  function moveShot(index: number, delta: number) {
+    setShots((prev) => {
+      const next = [...prev];
+      const target = index + delta;
+      if (target < 0 || target >= next.length) return prev;
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
   }
 
   async function runImport() {
@@ -51,7 +79,7 @@ export function ImportClient() {
       const payload =
         mode === "url" ? { type: "url", url } :
         mode === "text" ? { type: "text", text } :
-        { type: "image", image };
+        { type: "image", images: shots.map((s) => s.dataUrl) };
 
       const res = await fetch("/api/import", {
         method: "POST",
@@ -71,7 +99,7 @@ export function ImportClient() {
   const ready =
     (mode === "url" && url.trim().length > 4) ||
     (mode === "text" && text.trim().length > 20) ||
-    (mode === "image" && !!image);
+    (mode === "image" && shots.length > 0);
 
   if (draft) {
     return <ReviewDraft draft={draft} onBack={() => setDraft(null)} />;
@@ -133,12 +161,64 @@ export function ImportClient() {
             <input
               type="file"
               accept="image/*"
-              onChange={(e) => pickImage(e.target.files?.[0])}
+              multiple
+              onChange={(e) => {
+                void pickImages(e.target.files);
+                e.target.value = "";
+              }}
               className="field"
-              aria-label="Recipe image"
+              aria-label="Recipe photos"
             />
-            {imageName && (
-              <p className="text-sm text-bark mt-2">Selected: {imageName}</p>
+            {preparing && (
+              <p className="text-sm text-bark mt-2">Preparing images</p>
+            )}
+
+            {shots.length > 0 && (
+              <ul className="mt-3 space-y-2">
+                {shots.map((shot, i) => (
+                  <li
+                    key={`${shot.name}-${i}`}
+                    className="flex items-center gap-3 border border-mist rounded-lg p-2 bg-white"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={shot.dataUrl}
+                      alt=""
+                      className="w-12 h-12 object-cover rounded"
+                    />
+                    <span className="qty text-bark w-5 shrink-0">{i + 1}</span>
+                    <span className="flex-1 text-sm truncate">{shot.name}</span>
+                    <span className="text-fade text-xs shrink-0">
+                      {Math.round(approximateBytes(shot.dataUrl) / 1024)} KB
+                    </span>
+                    <span className="flex gap-1 shrink-0">
+                      <button
+                        onClick={() => moveShot(i, -1)}
+                        disabled={i === 0}
+                        className="text-sm text-fade hover:text-cocoa disabled:opacity-30"
+                        aria-label={`Move ${shot.name} earlier`}
+                      >
+                        Up
+                      </button>
+                      <button
+                        onClick={() => moveShot(i, 1)}
+                        disabled={i === shots.length - 1}
+                        className="text-sm text-fade hover:text-cocoa disabled:opacity-30"
+                        aria-label={`Move ${shot.name} later`}
+                      >
+                        Down
+                      </button>
+                      <button
+                        onClick={() => removeShot(i)}
+                        className="text-sm text-fade hover:text-brick"
+                        aria-label={`Remove ${shot.name}`}
+                      >
+                        Remove
+                      </button>
+                    </span>
+                  </li>
+                ))}
+              </ul>
             )}
           </div>
         )}
@@ -149,7 +229,7 @@ export function ImportClient() {
           disabled={loading || !ready}
         >
           <Knife size={17} />
-          {loading ? "Reading" : "Read recipe"}
+          {loading ? "Reading" : shots.length > 1 && mode === "image" ? `Read ${shots.length} images` : "Read recipe"}
         </button>
 
         {error && (
