@@ -85,20 +85,19 @@ export default async function LibraryPage({ searchParams }: PageProps<"/library"
         <ul className="card divide-y divide-mist px-4">
           {recipes.map((recipe) => (
             <li key={recipe.id}>
-              <Link
-                href={`/recipe/${recipe.id}`}
-                className="flex items-baseline gap-4 py-3.5 group"
-              >
-                <span className="flex-1">
-                  <span className="group-hover:text-blue">{recipe.title}</span>
-                  <span className="block text-sm text-fade mt-0.5">
-                    {recipe.cuisine}
-                    {recipe.totalTimeMin ? ` / ${recipe.totalTimeMin} min` : ""}
-                    {` / serves ${recipe.baseServings}`}
-                  </span>
-                </span>
-                <span className="qty text-sm text-fade shrink-0">
-                  {recipe.ingredients.length}
+              <Link href={`/recipe/${recipe.id}`} className="block py-3.5 group">
+                <span className="group-hover:text-blue">{recipe.title}</span>
+                {/* Everything measurable about the recipe sits on one line, so
+                    no figure is left floating without a label. Ingredient
+                    count is worth showing: it is the best quick read on how
+                    much faff a recipe is. */}
+                <span className="block text-sm text-fade mt-0.5">
+                  {recipe.cuisine}
+                  {recipe.totalTimeMin ? ` / ${recipe.totalTimeMin} min` : ""}
+                  {` / serves ${recipe.baseServings}`}
+                  {` / ${recipe.ingredients.length} ingredient${
+                    recipe.ingredients.length === 1 ? "" : "s"
+                  }`}
                 </span>
               </Link>
             </li>
