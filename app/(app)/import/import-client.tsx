@@ -174,7 +174,13 @@ export function ImportClient() {
             )}
 
             {shots.length > 0 && (
-              <ul className="mt-3 space-y-2">
+              <>
+                {shots.length > 1 && (
+                  <p className="text-sm text-bark mt-4 mb-2">
+                    Read in this order. The first should be where the recipe starts.
+                  </p>
+                )}
+              <ul className="mt-2 space-y-2">
                 {shots.map((shot, i) => (
                   <li
                     key={`${shot.name}-${i}`}
@@ -184,41 +190,52 @@ export function ImportClient() {
                     <img
                       src={shot.dataUrl}
                       alt=""
-                      className="w-12 h-12 object-cover rounded"
+                      className="w-11 h-14 object-cover object-top rounded border border-mist"
                     />
-                    <span className="qty text-bark w-5 shrink-0">{i + 1}</span>
-                    <span className="flex-1 text-sm truncate">{shot.name}</span>
-                    <span className="text-fade text-xs shrink-0">
-                      {Math.round(approximateBytes(shot.dataUrl) / 1024)} KB
+                    <span
+                      className="qty shrink-0 w-6 h-6 rounded-full bg-cocoa text-cream text-xs grid place-items-center"
+                      aria-hidden
+                    >
+                      {i + 1}
+                    </span>
+                    <span className="flex-1 min-w-0">
+                      <span className="block text-sm truncate">{shot.name}</span>
+                      <span className="block text-fade text-xs">
+                        {Math.round(approximateBytes(shot.dataUrl) / 1024)} KB
+                      </span>
                     </span>
                     <span className="flex gap-1 shrink-0">
                       <button
                         onClick={() => moveShot(i, -1)}
                         disabled={i === 0}
-                        className="text-sm text-fade hover:text-cocoa disabled:opacity-30"
+                        className="w-7 h-7 rounded border border-mist text-cocoa hover:border-bark disabled:opacity-25 disabled:hover:border-mist"
+                        title="Read this one earlier"
                         aria-label={`Move ${shot.name} earlier`}
                       >
-                        Up
+                        <span aria-hidden>{"\u2191"}</span>
                       </button>
                       <button
                         onClick={() => moveShot(i, 1)}
                         disabled={i === shots.length - 1}
-                        className="text-sm text-fade hover:text-cocoa disabled:opacity-30"
+                        className="w-7 h-7 rounded border border-mist text-cocoa hover:border-bark disabled:opacity-25 disabled:hover:border-mist"
+                        title="Read this one later"
                         aria-label={`Move ${shot.name} later`}
                       >
-                        Down
+                        <span aria-hidden>{"\u2193"}</span>
                       </button>
                       <button
                         onClick={() => removeShot(i)}
-                        className="text-sm text-fade hover:text-brick"
+                        className="w-7 h-7 rounded border border-mist text-fade hover:text-brick hover:border-brick"
+                        title="Remove this image"
                         aria-label={`Remove ${shot.name}`}
                       >
-                        Remove
+                        <span aria-hidden>{"\u00d7"}</span>
                       </button>
                     </span>
                   </li>
                 ))}
               </ul>
+              </>
             )}
           </div>
         )}
