@@ -96,16 +96,11 @@ export function GenerateClient() {
     <div>
       <h1 className="display text-5xl mb-2">What are you cooking?</h1>
       <p className="text-bark mb-8 leading-relaxed max-w-prose">
-        Tell it what is in the kitchen and what you feel like. It already knows
-        how you eat.
+        Three ideas, built around whatever is in there.
       </p>
 
       <div className="card p-5 mb-6">
         <SectionHeading icon={<Citrus />}>What you have in</SectionHeading>
-        <p className="text-fade text-sm mb-3 leading-relaxed">
-          Type what is actually there right now, separated by commas or new lines.
-          Nothing to maintain; this is just for this search.
-        </p>
         <textarea
           value={have}
           onChange={(e) => persistHave(e.target.value)}
