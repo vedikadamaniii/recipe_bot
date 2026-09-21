@@ -1,56 +1,42 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   Recipe Bot
+   Recipe Bot — palette straight from the reference.
 
-   Palette taken from the reference: deep cocoa, warm bark, sage, dusty blue,
-   pale mist, warm cream — brightened by putting the cream forward as the
-   ground and lifting cards to near-white, so the earthy hues read as warm
-   rather than muddy.
+     #EFE9E1 cream   page ground
+     #D0D5CE mist    rules and borders
+     #6E8658 sage    selected state, "you have this"
+     #73A1B2 blue    values the app worked out for you
+     #57473A bark    secondary text
+     #290907 cocoa   ink, and primary actions
 
-   Colour still carries meaning rather than decorating:
-     blue      what you can act on, and what the app worked out for you
-     turmeric  an ingredient to taste and adjust, not tip straight in
-     brick     something went wrong
+   Light grounds, dark features. Sage and blue are darkened from the reference
+   swatches for text use — the swatch values are chosen to sit next to each
+   other as blocks, and do not carry enough contrast against cream as type.
 
-   The reference palette's sage is deliberately left out of the interface —
-   it reads as the "green and white" look this was moving away from.
+   There is deliberately no dark mode: the brief is a bright interface, and
+   honouring prefers-color-scheme would hand that decision back to the OS.
 --------------------------------------------------------------------------- */
 
 :root {
+  color-scheme: light;
+
   --cream: #efe9e1;
-  --linen: #faf7f2;
+  --linen: #faf8f4;
   --cocoa: #290907;
   --bark: #57473a;
-  --fade: #8d8071;
+  --fade: #8a7d6e;
   --mist: #d0d5ce;
-  --sage: #5e7849;
-  --sage-bright: #6e8658;
-  --blue: #3f7f96;
-  --blue-bright: #73a1b2;
-  --blue-wash: #e3edf1;
-  --turmeric: #a9761a;
-  --turmeric-wash: #f6ecd8;
-  --brick: #9c3b22;
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --cream: #1a100e;
-    --linen: #241614;
-    --cocoa: #f2e9df;
-    --bark: #c2b1a1;
-    --fade: #8d7d70;
-    --mist: #3d2b26;
-    --sage: #9cba85;
-    --sage-bright: #9cba85;
-    --blue: #8fc0d2;
-    --blue-bright: #8fc0d2;
-    --blue-wash: #1f3138;
-    --turmeric: #e0aa4e;
-    --turmeric-wash: #33240f;
-    --brick: #e08063;
-  }
+  /* Reference swatches, kept for large blocks and fills. */
+  --sage-swatch: #6e8658;
+  --blue-swatch: #73a1b2;
+
+  /* Darkened for type and icons, where contrast has to carry. */
+  --sage: #4f6139;
+  --blue: #2f6c84;
+  --turmeric: #8a5e12;
+  --brick: #8c3320;
 }
 
 @theme inline {
@@ -61,12 +47,12 @@
   --color-fade: var(--fade);
   --color-mist: var(--mist);
   --color-sage: var(--sage);
+  --color-sage-swatch: var(--sage-swatch);
   --color-blue: var(--blue);
-  --color-blue-wash: var(--blue-wash);
+  --color-blue-swatch: var(--blue-swatch);
   --color-turmeric: var(--turmeric);
-  --color-turmeric-wash: var(--turmeric-wash);
   --color-brick: var(--brick);
-  --font-sans: var(--font-archivo);
+  --font-sans: var(--font-karla);
   --font-display: var(--font-bodoni);
 }
 
@@ -75,12 +61,11 @@ html { background: var(--cream); }
 body {
   background: var(--cream);
   color: var(--cocoa);
-  font-family: var(--font-archivo), system-ui, sans-serif;
+  font-family: var(--font-karla), system-ui, sans-serif;
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
 }
 
-/* Display type is the high-contrast serif from the reference. */
 .display {
   font-family: var(--font-bodoni), Georgia, serif;
   font-weight: 500;
@@ -88,11 +73,10 @@ body {
   line-height: 1.08;
 }
 
-/* Quantities are set on Archivo's width axis — figures stamped on a jug. */
 .qty {
-  font-variation-settings: "wdth" 112, "wght" 600;
+  font-weight: 700;
   font-feature-settings: "tnum" 1;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.005em;
 }
 
 .card {
@@ -102,7 +86,7 @@ body {
 }
 
 .field {
-  background: var(--linen);
+  background: #fff;
   border: 1px solid var(--mist);
   border-radius: 8px;
   padding: 0.6rem 0.75rem;
@@ -112,9 +96,9 @@ body {
 }
 .field::placeholder { color: var(--fade); }
 .field:focus-visible {
-  outline: 2px solid var(--blue);
+  outline: 2px solid var(--sage);
   outline-offset: -1px;
-  border-color: var(--blue);
+  border-color: var(--sage);
 }
 
 .btn {
@@ -123,35 +107,36 @@ body {
   justify-content: center;
   gap: 0.45rem;
   border-radius: 8px;
-  padding: 0.6rem 1rem;
-  font-variation-settings: "wdth" 104, "wght" 600;
+  padding: 0.62rem 1.05rem;
+  font-weight: 700;
   border: 1px solid transparent;
   cursor: pointer;
   transition: background-color 130ms ease, border-color 130ms ease;
 }
-.btn-primary { background: var(--blue); color: #fff; }
-@media (prefers-color-scheme: dark) { .btn-primary { color: #1a100e; } }
-.btn-primary:hover:not(:disabled) { filter: brightness(1.1); }
+
+/* Primary actions are the darkest thing on the page, per the brief. */
+.btn-primary { background: var(--cocoa); color: var(--cream); }
+.btn-primary:hover:not(:disabled) { background: #3d1511; }
 
 .btn-quiet {
-  background: transparent;
+  background: #fff;
   border-color: var(--mist);
   color: var(--cocoa);
 }
-.btn-quiet:hover:not(:disabled) { border-color: var(--bark); background: var(--linen); }
-.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.btn-quiet:hover:not(:disabled) { border-color: var(--bark); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 :where(a, button, input, select, textarea):focus-visible {
-  outline: 2px solid var(--blue);
+  outline: 2px solid var(--sage);
   outline-offset: 2px;
 }
 
 .chip {
   border: 1px solid var(--mist);
-  background: var(--linen);
+  background: #fff;
   border-radius: 999px;
-  padding: 0.3rem 0.8rem;
-  font-size: 0.84rem;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.86rem;
   cursor: pointer;
   white-space: nowrap;
   color: var(--bark);
@@ -159,15 +144,11 @@ body {
 }
 .chip:hover { border-color: var(--bark); }
 .chip[aria-pressed="true"] {
-  background: var(--blue);
-  border-color: var(--blue);
-  color: #fff;
-}
-@media (prefers-color-scheme: dark) {
-  .chip[aria-pressed="true"] { color: #1a100e; }
+  background: var(--sage);
+  border-color: var(--sage);
+  color: var(--cream);
 }
 
-/* A rule with a small ornament sitting on it, used to open a section. */
 .section-rule {
   display: flex;
   align-items: center;

@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
-import { Archivo, Bodoni_Moda } from "next/font/google";
+import { Bodoni_Moda, Karla } from "next/font/google";
 import "./globals.css";
 
-// Two families, clearly distinct. Bodoni carries the headings — the
-// high-contrast serif from the reference palette. Archivo does everything
-// else, and its width axis is what sets quantities apart (see `.qty`).
-const archivo = Archivo({
-  variable: "--font-archivo",
+// Karla for everything at reading and interface size: warmer and less
+// mechanical than a neutral grotesque, with the figures still clear enough to
+// read a quantity at a glance. Bodoni carries the headings.
+const karla = Karla({
+  variable: "--font-karla",
   subsets: ["latin"],
-  axes: ["wdth"],
 });
 
 const bodoni = Bodoni_Moda({
@@ -24,10 +23,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html
-      lang="en"
-      className={`${archivo.variable} ${bodoni.variable} h-full antialiased`}
-    >
+    <html lang="en" className={`${karla.variable} ${bodoni.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   );

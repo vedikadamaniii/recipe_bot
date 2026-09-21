@@ -13,7 +13,7 @@ export default function AppLayout({ children }: LayoutProps<"/">) {
       <header className="sticky top-0 z-20 bg-cream/95 backdrop-blur border-b border-mist">
         <div className="mx-auto max-w-3xl px-5 h-16 flex items-center gap-6">
           <Link href="/generate" className="flex items-center gap-2 shrink-0">
-            <span className="text-cocoa">
+            <span className="text-sage">
               <Sprig size={22} />
             </span>
             <span className="display text-xl">Recipe Bot</span>

@@ -239,7 +239,7 @@ function ResultCard({ recipe }: { recipe: Generated }) {
 
       <p className="text-sm mt-4">
         {missing.length === 0 ? (
-          <span className="text-blue">You have everything for this.</span>
+          <span className="text-sage">You have everything for this.</span>
         ) : (
           <span className="text-bark">Still need: {missing.join(", ")}</span>
         )}
