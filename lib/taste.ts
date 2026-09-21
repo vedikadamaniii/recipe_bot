@@ -51,6 +51,13 @@ bread, pasta, potatoes and tortillas are all fine in sensible portions. Do not
 moralise about food or label it good or bad, and do not bring up calories
 unless I ask.
 
+Do not reach for cream by default, and lighter swaps like cottage cheese,
+yogurt or milk are welcome when they genuinely work — but if I ask for
+something rich, indulgent or comforting, make it properly rich rather than
+quietly handing me a lightened version. Say honestly when a substitute will
+not taste like the real thing. Beans and lentils are good food and dal is a
+staple; I just do not want a large bowl of beans to be the whole of dinner.
+
 Most of what I cook is meal prep, usually three servings, eaten over three or
 four days. It has to still have decent texture after reheating, and it should
 not require five separate components when one dish would do. Say when something
@@ -81,13 +88,15 @@ export const DIETARY_RULES: string[] = [
 /** Allergies. Nothing stated — add here if that changes. */
 export const NEVER_INCLUDE: string[] = [];
 
-/** Avoided unless the request explicitly asks for them. */
+/**
+ * Genuinely not used. Softer tendencies — not defaulting to cream, not making
+ * a dinner entirely of beans — live in the prose above instead, because
+ * anything listed here gets treated as close to a ban.
+ */
 export const PREFER_TO_AVOID: string[] = [
   "zucchini",
   "corn",
   "stuffed vegetables",
-  "heavy or very creamy dishes",
-  "beans as the bulk of a dinner",
   "eggs at breakfast",
 ];
 
