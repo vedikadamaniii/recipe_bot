@@ -1,159 +1,184 @@
 @import "tailwindcss";
 
 /* ---------------------------------------------------------------------------
-   Recipe Bot — "kitchen ledger"
+   Recipe Bot
 
-   The product's whole thesis is structured quantities, so the measurement is
-   the hero rather than food photography (most saved recipes have no image).
+   Palette taken from the reference: deep cocoa, warm bark, sage, dusty blue,
+   pale mist, warm cream — brightened by putting the cream forward as the
+   ground and lifting cards to near-white, so the earthy hues read as warm
+   rather than muddy.
 
-   One rule governs colour: it carries meaning, never decoration. Indigo marks
-   what you can act on and what changed when you scaled. Madder is reserved
-   exclusively for ingredients that need a taste check. Nothing else is
-   coloured, so when something is, it means something.
+   Colour still carries meaning rather than decorating:
+     blue      what you can act on, and what the app worked out for you
+     turmeric  an ingredient to taste and adjust, not tip straight in
+     brick     something went wrong
+
+   The reference palette's sage is deliberately left out of the interface —
+   it reads as the "green and white" look this was moving away from.
 --------------------------------------------------------------------------- */
 
 :root {
-  --paper: #edeee8;
-  --paper-raised: #f6f7f3;
-  --ink: #191c15;
-  --ink-soft: #5c6152;
-  --ink-faint: #8d9184;
-  --rule: #d2d4ca;
-  --indigo: #2a3c9b;
-  --indigo-soft: #dfe2f4;
-  --madder: #a33222;
-  --madder-soft: #f4e2de;
+  --cream: #efe9e1;
+  --linen: #faf7f2;
+  --cocoa: #290907;
+  --bark: #57473a;
+  --fade: #8d8071;
+  --mist: #d0d5ce;
+  --sage: #5e7849;
+  --sage-bright: #6e8658;
+  --blue: #3f7f96;
+  --blue-bright: #73a1b2;
+  --blue-wash: #e3edf1;
+  --turmeric: #a9761a;
+  --turmeric-wash: #f6ecd8;
+  --brick: #9c3b22;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #14170f;
-    --paper-raised: #1d2118;
-    --ink: #e8eae0;
-    --ink-soft: #a3a89a;
-    --ink-faint: #6f7466;
-    --rule: #2f342a;
-    --indigo: #9fb0ff;
-    --indigo-soft: #232a4d;
-    --madder: #e2836f;
-    --madder-soft: #3a211c;
+    --cream: #1a100e;
+    --linen: #241614;
+    --cocoa: #f2e9df;
+    --bark: #c2b1a1;
+    --fade: #8d7d70;
+    --mist: #3d2b26;
+    --sage: #9cba85;
+    --sage-bright: #9cba85;
+    --blue: #8fc0d2;
+    --blue-bright: #8fc0d2;
+    --blue-wash: #1f3138;
+    --turmeric: #e0aa4e;
+    --turmeric-wash: #33240f;
+    --brick: #e08063;
   }
 }
 
 @theme inline {
-  --color-paper: var(--paper);
-  --color-paper-raised: var(--paper-raised);
-  --color-ink: var(--ink);
-  --color-ink-soft: var(--ink-soft);
-  --color-ink-faint: var(--ink-faint);
-  --color-rule: var(--rule);
-  --color-indigo: var(--indigo);
-  --color-indigo-soft: var(--indigo-soft);
-  --color-madder: var(--madder);
-  --color-madder-soft: var(--madder-soft);
+  --color-cream: var(--cream);
+  --color-linen: var(--linen);
+  --color-cocoa: var(--cocoa);
+  --color-bark: var(--bark);
+  --color-fade: var(--fade);
+  --color-mist: var(--mist);
+  --color-sage: var(--sage);
+  --color-blue: var(--blue);
+  --color-blue-wash: var(--blue-wash);
+  --color-turmeric: var(--turmeric);
+  --color-turmeric-wash: var(--turmeric-wash);
+  --color-brick: var(--brick);
   --font-sans: var(--font-archivo);
+  --font-display: var(--font-bodoni);
 }
 
-html {
-  background: var(--paper);
-}
+html { background: var(--cream); }
 
 body {
-  background: var(--paper);
-  color: var(--ink);
+  background: var(--cream);
+  color: var(--cocoa);
   font-family: var(--font-archivo), system-ui, sans-serif;
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
 }
 
-/* The width axis is the emphasis mechanism: quantities are set expanded, like
-   figures stamped on a measuring jug. This is why the type is Archivo. */
+/* Display type is the high-contrast serif from the reference. */
+.display {
+  font-family: var(--font-bodoni), Georgia, serif;
+  font-weight: 500;
+  letter-spacing: -0.005em;
+  line-height: 1.08;
+}
+
+/* Quantities are set on Archivo's width axis — figures stamped on a jug. */
 .qty {
-  font-variation-settings: "wdth" 115, "wght" 600;
+  font-variation-settings: "wdth" 112, "wght" 600;
   font-feature-settings: "tnum" 1;
   letter-spacing: -0.01em;
 }
 
-.display {
-  font-variation-settings: "wdth" 112, "wght" 650;
-  letter-spacing: -0.025em;
-  line-height: 1.02;
-}
-
-/* Ledger rules: structure that encodes recipe anatomy rather than decorating. */
-.rule-top {
-  border-top: 1px solid var(--rule);
+.card {
+  background: var(--linen);
+  border: 1px solid var(--mist);
+  border-radius: 10px;
 }
 
 .field {
-  background: var(--paper-raised);
-  border: 1px solid var(--rule);
-  border-radius: 2px;
-  padding: 0.55rem 0.7rem;
-  color: var(--ink);
+  background: var(--linen);
+  border: 1px solid var(--mist);
+  border-radius: 8px;
+  padding: 0.6rem 0.75rem;
+  color: var(--cocoa);
   width: 100%;
   font: inherit;
 }
-
+.field::placeholder { color: var(--fade); }
 .field:focus-visible {
-  outline: 2px solid var(--indigo);
+  outline: 2px solid var(--blue);
   outline-offset: -1px;
-  border-color: var(--indigo);
+  border-color: var(--blue);
 }
 
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
-  border-radius: 2px;
-  padding: 0.55rem 0.9rem;
-  font-variation-settings: "wdth" 105, "wght" 600;
+  gap: 0.45rem;
+  border-radius: 8px;
+  padding: 0.6rem 1rem;
+  font-variation-settings: "wdth" 104, "wght" 600;
   border: 1px solid transparent;
   cursor: pointer;
-  transition: background-color 120ms ease, border-color 120ms ease;
+  transition: background-color 130ms ease, border-color 130ms ease;
 }
-
-.btn-primary {
-  background: var(--indigo);
-  color: var(--paper);
-}
-@media (prefers-color-scheme: dark) {
-  .btn-primary { color: #14170f; }
-}
-.btn-primary:hover:not(:disabled) { filter: brightness(1.12); }
+.btn-primary { background: var(--blue); color: #fff; }
+@media (prefers-color-scheme: dark) { .btn-primary { color: #1a100e; } }
+.btn-primary:hover:not(:disabled) { filter: brightness(1.1); }
 
 .btn-quiet {
   background: transparent;
-  border-color: var(--rule);
-  color: var(--ink);
+  border-color: var(--mist);
+  color: var(--cocoa);
 }
-.btn-quiet:hover:not(:disabled) { border-color: var(--ink-soft); }
-
+.btn-quiet:hover:not(:disabled) { border-color: var(--bark); background: var(--linen); }
 .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
 :where(a, button, input, select, textarea):focus-visible {
-  outline: 2px solid var(--indigo);
+  outline: 2px solid var(--blue);
   outline-offset: 2px;
 }
 
-/* A selected filter reads as pressed rather than merely tinted. */
 .chip {
-  border: 1px solid var(--rule);
+  border: 1px solid var(--mist);
+  background: var(--linen);
   border-radius: 999px;
-  padding: 0.25rem 0.7rem;
-  font-size: 0.82rem;
+  padding: 0.3rem 0.8rem;
+  font-size: 0.84rem;
   cursor: pointer;
   white-space: nowrap;
-  transition: background-color 120ms ease, border-color 120ms ease;
+  color: var(--bark);
+  transition: background-color 130ms ease, border-color 130ms ease, color 130ms ease;
 }
+.chip:hover { border-color: var(--bark); }
 .chip[aria-pressed="true"] {
-  background: var(--indigo);
-  border-color: var(--indigo);
-  color: var(--paper);
+  background: var(--blue);
+  border-color: var(--blue);
+  color: #fff;
 }
 @media (prefers-color-scheme: dark) {
-  .chip[aria-pressed="true"] { color: #14170f; }
+  .chip[aria-pressed="true"] { color: #1a100e; }
+}
+
+/* A rule with a small ornament sitting on it, used to open a section. */
+.section-rule {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--bark);
+}
+.section-rule::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--mist);
 }
 
 @media (prefers-reduced-motion: reduce) {

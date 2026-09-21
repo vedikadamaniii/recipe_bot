@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import type { Recipe } from "@/lib/schema";
 import { SERVING_PRESETS, scaleRecipe, type ScaledIngredient } from "@/lib/scale";
 import { formatAmount, formatQuantity, toMeasure, UNITS, type Measure } from "@/lib/units";
+import { Chilli, Citrus, Pot, SectionHeading } from "@/components/ornaments";
 
 type MeasurePref = "written" | Measure;
 
@@ -56,9 +57,9 @@ export function RecipeView({
     <article>
       {/* Controls. Scaling is the signature interaction, so it sits above the
           ingredients rather than hidden in a menu. */}
-      <div className="rule-top pt-4 mb-6">
+      <div className="card p-4 mb-6">
         <div className="flex flex-wrap items-center gap-2 mb-3">
-          <span className="text-sm text-ink-soft mr-1">Servings</span>
+          <span className="text-sm text-bark mr-1">Servings</span>
           {SERVING_PRESETS.map((preset) => (
             <button
               key={preset.servings}
@@ -85,7 +86,7 @@ export function RecipeView({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <span className="text-sm text-ink-soft mr-1">Units</span>
+          <span className="text-sm text-bark mr-1">Units</span>
           {MEASURE_OPTIONS.map((option) => (
             <button
               key={option.value}
@@ -100,46 +101,47 @@ export function RecipeView({
       </div>
 
       {isScaled && (
-        <p className="text-sm mb-5 text-indigo">
-          Scaled from {recipe.baseServings} to {servings} servings.
+        <p className="text-sm mb-5 text-blue">
+          Scaled from {recipe.baseServings} to {servings}{" "}
+          {servings === 1 ? "serving" : "servings"}.
         </p>
       )}
 
       {/* The ingredient ledger: quantities align in their own column. */}
       <section className="mb-9">
-        <h2 className="text-sm text-ink-soft mb-1">Ingredients</h2>
+        <SectionHeading icon={<Citrus />}>Ingredients</SectionHeading>
         {groups.map(([group, items]) => (
           <div key={group || "_"} className="mb-4">
             {group && (
-              <h3 className="text-sm text-ink-soft mt-4 mb-1 italic">{group}</h3>
+              <h3 className="text-sm text-bark mt-4 mb-1 italic">{group}</h3>
             )}
             <ul>
               {items.map((ing, i) => (
                 <li
                   key={`${group}-${i}-${ing.item}`}
-                  className="flex items-baseline gap-3 py-2 border-t border-rule"
+                  className="flex items-baseline gap-3 py-2 border-t border-mist"
                 >
                   <span
                     className={`qty w-28 shrink-0 text-right ${
-                      isScaled && ing.scaledQty !== null ? "text-indigo" : ""
+                      isScaled && ing.scaledQty !== null ? "text-blue" : ""
                     }`}
                   >
                     {displayAmount(ing, pref)}
                   </span>
                   <span className="flex-1">
                     {ing.item}
-                    {ing.prep && <span className="text-ink-soft">, {ing.prep}</span>}
+                    {ing.prep && <span className="text-bark">, {ing.prep}</span>}
                     {ing.scaledQty === null && (
-                      <span className="text-ink-faint"> — to taste</span>
+                      <span className="text-fade"> — to taste</span>
                     )}
                     {ing.needsTasteCheck && (
-                      <span className="text-madder text-sm"> · taste and adjust</span>
+                      <span className="text-turmeric text-sm"> · taste and adjust</span>
                     )}
                   </span>
                   {onAskSubstitute && (
                     <button
                       onClick={() => onAskSubstitute(ing.item)}
-                      className="text-sm text-ink-faint hover:text-indigo shrink-0"
+                      className="text-sm text-fade hover:text-sage shrink-0"
                     >
                       Swap
                     </button>
@@ -151,27 +153,30 @@ export function RecipeView({
         ))}
 
         {tasteChecks > 0 && (
-          <p className="text-sm text-ink-soft mt-4 leading-relaxed border-l-2 border-madder pl-3">
+          <p className="text-sm text-bark mt-4 leading-relaxed border-l-2 border-turmeric pl-3 flex gap-2">
+            <span className="text-turmeric shrink-0 mt-0.5"><Chilli size={16} /></span>
+            <span>
             {tasteChecks === 1 ? "One ingredient does" : `${tasteChecks} ingredients do`}{" "}
             not scale linearly in real cooking. The arithmetic is done, but season
             towards it rather than tipping it all in.
+            </span>
           </p>
         )}
       </section>
 
       <section>
-        <h2 className="text-sm text-ink-soft mb-1">Method</h2>
+        <SectionHeading icon={<Pot />}>Method</SectionHeading>
         <ol>
           {scaled.steps.map((step) => (
             <li
               key={step.n}
-              className="flex gap-4 py-3 border-t border-rule leading-relaxed"
+              className="flex gap-4 py-3 border-t border-mist leading-relaxed"
             >
-              <span className="qty text-ink-faint w-6 shrink-0">{step.n}</span>
+              <span className="qty text-fade w-6 shrink-0">{step.n}</span>
               <span className="flex-1">
                 {step.text}
                 {step.minutes ? (
-                  <span className="text-ink-faint"> ({step.minutes} min)</span>
+                  <span className="text-fade"> ({step.minutes} min)</span>
                 ) : null}
               </span>
             </li>
@@ -191,10 +196,10 @@ export function RecipeMeta({ recipe }: { recipe: Recipe }) {
   ].filter(Boolean);
 
   return (
-    <p className="text-ink-soft text-sm">
+    <p className="text-bark text-sm">
       {bits.map((bit, i) => (
         <span key={bit as string}>
-          {i > 0 && <span className="text-ink-faint"> / </span>}
+          {i > 0 && <span className="text-fade"> / </span>}
           {bit}
         </span>
       ))}

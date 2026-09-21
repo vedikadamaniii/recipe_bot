@@ -1,8 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { createClient } from "@/lib/supabase/server";
-import { OWNER_ID } from "@/lib/owner";
-import { getTasteProfile, listPantry } from "@/lib/db";
 import { buildSystemInstruction, buildUserPrompt, type GenerationRequest } from "@/lib/prompt";
+import { TASTE } from "@/lib/taste";
 import {
   GENERATION_SCHEMA,
   GeminiUnavailableError,
@@ -18,16 +16,10 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid request." }, { status: 400 });
   }
 
-  const supabase = await createClient();
-  const [profile, pantry] = await Promise.all([
-    getTasteProfile(supabase, OWNER_ID),
-    listPantry(supabase),
-  ]);
-
   try {
     const parsed = (await generateJson({
-      prompt: buildUserPrompt(body, pantry),
-      systemInstruction: buildSystemInstruction(profile),
+      prompt: buildUserPrompt(body),
+      systemInstruction: buildSystemInstruction(TASTE),
       schema: GENERATION_SCHEMA,
     })) as { recipes?: Record<string, unknown>[] };
 

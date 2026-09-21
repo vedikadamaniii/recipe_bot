@@ -14,38 +14,33 @@ import { generateJson } from "../gemini";
 import { buildSystemInstruction, buildUserPrompt } from "../prompt";
 import { scaleRecipe } from "../scale";
 import { ALL_UNITS } from "../units";
-import type { PantryItem, Recipe, TasteProfile } from "../schema";
+import type { Recipe, TasteProfile } from "../schema";
+import { TASTE } from "../taste";
 
 const apiKey = process.env.GEMINI_API_KEY;
 
-const profile: TasteProfile = {
-  userId: "test",
-  summary:
-    "I cook mostly Indian and Mediterranean food on weeknights. I like bold, " +
-    "sour and spiced flavours, and I batch cook on Sundays. I do not enjoy " +
-    "very sweet savoury dishes.",
-  allergies: ["peanuts", "shellfish"],
-  dislikes: ["raw tomato"],
-  spiceLevel: "medium",
-  equipment: ["gas hob", "oven", "blender"],
-};
+// The real shipped profile, so these tests exercise the rules that actually
+// reach the model rather than a stand-in.
+const profile: TasteProfile = TASTE;
 
-const pantry: PantryItem[] = [
-  { id: "1", userId: "test", name: "red lentils" },
-  { id: "2", userId: "test", name: "onions" },
-  { id: "3", userId: "test", name: "garlic" },
-  { id: "4", userId: "test", name: "canned tomatoes" },
-  { id: "5", userId: "test", name: "spinach" },
-  { id: "6", userId: "test", name: "greek yogurt" },
+const pantry = [
+  "red lentils",
+  "onions",
+  "garlic",
+  "canned tomatoes",
+  "spinach",
+  "greek yogurt",
 ];
 
 describe.skipIf(!apiKey)("Gemini structured output (live)", () => {
   it("returns recipes that satisfy our schema and scale deterministically", async () => {
     const parsed = (await generateJson({
-      prompt: buildUserPrompt(
-        { ask: "high protein dinner I can batch cook", intents: ["high-protein", "meal-prep"], pantryOnly: true },
-        pantry,
-      ),
+      prompt: buildUserPrompt({
+        ask: "high protein dinner I can batch cook",
+        intents: ["high-protein", "meal-prep"],
+        have: pantry,
+        useOnlyWhatIHave: true,
+      }),
       systemInstruction: buildSystemInstruction(profile),
       schema: GENERATION_SCHEMA,
     })) as { recipes: Record<string, unknown>[] };
@@ -89,38 +84,49 @@ describe.skipIf(!apiKey)("Gemini structured output (live)", () => {
     expect(tripled.some((i: { needsTasteCheck: boolean }) => i.needsTasteCheck)).toBe(true);
   });
 
-  it("respects a stated allergy", async () => {
+  it("refuses beef and pork even when the dish asks for them", async () => {
     const parsed = await generateJson({
-      prompt: buildUserPrompt(
-        { ask: "a satay-style noodle dish with a rich nutty sauce", servings: 2 },
-        [],
-      ),
+      prompt: buildUserPrompt({
+        ask: "a classic slow-cooked beef ragu with pancetta, for pasta",
+        servings: 4,
+      }),
       systemInstruction: buildSystemInstruction(profile),
       schema: GENERATION_SCHEMA,
     });
+
+    const items = (parsed as { recipes: Record<string, unknown>[] }).recipes
+      .map((r) => coerceRecipe(r, "generated"))
+      .flatMap((r) => r.ingredients.map((i) => i.item))
+      .join(" | ")
+      .toLowerCase();
+
+    expect(items).not.toMatch(/\bbeef|\bveal\b|\bbrisket\b|\bchuck\b/);
+    expect(items).not.toMatch(/\bpork\b|\bpancetta\b|\bbacon\b|\bguanciale\b|\bchorizo\b|\bprosciutto\b/);
+  });
+
+  it("allows only shrimp and salmon, and does not over-restrict condiments", async () => {
+    const parsed = await generateJson({
+      prompt: buildUserPrompt({
+        ask: "a punchy Thai-style seafood noodle dish built on fish sauce",
+        servings: 2,
+      }),
+      systemInstruction: buildSystemInstruction(profile),
+      schema: GENERATION_SCHEMA,
+    });
+
     const recipes = (parsed as { recipes: Record<string, unknown>[] }).recipes.map((r) =>
       coerceRecipe(r, "generated"),
     );
     const items = recipes
-      .flatMap((r) => r.ingredients.map((i) => `${i.item} ${i.prep ?? ""}`))
+      .flatMap((r) => r.ingredients.map((i) => i.item))
       .join(" | ")
       .toLowerCase();
 
-    // Asking for satay is asking for peanuts. The model must adapt, never
-    // quietly include the allergen.
-    //
-    // Note the negation stripping: the model legitimately writes things like
-    // "shellfish-free curry paste", and a naive substring check reads that as
-    // a violation when it is the opposite.
-    const withoutNegations = items.replace(
-      /\b(peanut|shellfish|shrimp|prawn)s?[-\s]?free\b/g,
-      "",
-    );
+    // Banned seafood must not appear as an ingredient.
+    expect(items).not.toMatch(/\bcod\b|\btuna\b|\bsquid\b|\bmussel|\bcrab\b|\bscallop|\banchov|\boyster(?!\s+sauce)/);
 
-    expect(withoutNegations).not.toMatch(/\bpeanut/);
-    expect(withoutNegations).not.toMatch(/\bshrimp|\bprawn|\bshellfish/);
-
-    // And it should still have produced a usable nutty sauce by substituting.
-    expect(items).toMatch(/cashew|almond|tahini|sunflower|sesame/);
+    // ...but the condiment carve-out must survive, or the rule has overshot
+    // and made whole cuisines impossible.
+    expect(items).toMatch(/fish sauce|shrimp paste|oyster sauce/);
   });
 });

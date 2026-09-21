@@ -8,7 +8,8 @@
  * an allergy buried in a paragraph.
  */
 
-import type { PantryItem, TasteProfile } from "./schema";
+import type { TasteProfile } from "./schema";
+import { DIETARY_RULES } from "./taste";
 
 export type GenerationRequest = {
   /** What you typed, e.g. "something high protein I can eat cold tomorrow". */
@@ -18,8 +19,10 @@ export type GenerationRequest = {
   cuisine?: string | null;
   /** Build the recipe around this. */
   centerpiece?: string | null;
-  /** Only suggest things makeable from the pantry, give or take a few items. */
-  pantryOnly?: boolean;
+  /** What you have in the kitchen right now, typed on the Cook page. */
+  have?: string[];
+  /** Restrict to roughly what is on hand. */
+  useOnlyWhatIHave?: boolean;
   servings?: number;
 };
 
@@ -47,6 +50,17 @@ const OUTPUT_RULES = `Rules for every recipe you write:
 /** Hard constraints, stated where the model cannot miss them. */
 function constraintBlock(profile: TasteProfile): string {
   const lines: string[] = [];
+
+  if (DIETARY_RULES.length > 0) {
+    lines.push(
+      `ABSOLUTE DIETARY RULES — these are not preferences, and they hold even
+when the cook asks for a dish that classically breaks them. If a requested dish
+requires something on this list, adapt it openly or suggest a different dish;
+never quietly substitute and never quietly include it.
+
+${DIETARY_RULES.map((r) => `- ${r}`).join("\n")}`,
+    );
+  }
 
   if (profile.allergies.length > 0) {
     lines.push(
@@ -113,8 +127,8 @@ const INTENT_HINTS: Record<string, string> = {
   "one-pot": "Everything in a single pan or pot; minimal washing up.",
 };
 
-/** Turn the structured request plus pantry into the user-turn prompt. */
-export function buildUserPrompt(req: GenerationRequest, pantry: PantryItem[]): string {
+/** Turn the structured request plus what is on hand into the user-turn prompt. */
+export function buildUserPrompt(req: GenerationRequest): string {
   const parts: string[] = [];
 
   parts.push(req.ask?.trim() || "Suggest something I would like to cook.");
@@ -128,20 +142,22 @@ export function buildUserPrompt(req: GenerationRequest, pantry: PantryItem[]): s
   if (req.centerpiece) parts.push(`Build the recipe around: ${req.centerpiece}.`);
   if (req.servings) parts.push(`Write the quantities for ${req.servings} servings.`);
 
-  if (pantry.length > 0) {
-    const items = pantry.map((p) => p.name).join(", ");
+  const have = (req.have ?? []).map((h) => h.trim()).filter(Boolean);
+  if (have.length > 0) {
+    const items = have.join(", ");
     parts.push(
-      req.pantryOnly
-        ? `I want to cook using only what I already have. My pantry: ${items}.
-You may assume salt, pepper, oil and water. If a recipe genuinely needs one or
-two things I do not have, that is acceptable — but say so clearly.`
-        : `Things I currently have, prefer recipes that use them: ${items}.`,
+      req.useOnlyWhatIHave
+        ? `I want to cook with what I have in right now: ${items}.
+You may assume salt, pepper, oil, water and basic dried spices. Stay within this
+list as far as you reasonably can. If a dish genuinely needs one or two more
+things, that is fine, but say so plainly.`
+        : `Things I have in right now — prefer recipes that use them: ${items}.`,
     );
   }
 
   parts.push(
     `Give me 3 distinct options — not three variations of the same dish. For each,
-list any ingredient I would need to buy that is not in my pantry.`,
+list any ingredient I would need to buy that is not on my list.`,
   );
 
   return parts.join("\n\n");
@@ -151,16 +167,17 @@ list any ingredient I would need to buy that is not in my pantry.`,
 export function buildSubstitutionPrompt(
   ingredient: string,
   recipeTitle: string,
-  pantry: PantryItem[],
+  onHand: string[],
   profile: TasteProfile | null,
 ): string {
-  const have = pantry.map((p) => p.name).join(", ");
+  const have = onHand.filter(Boolean).join(", ");
   return [
     `I am making "${recipeTitle}" and I need to replace: ${ingredient}.`,
     have ? `Things I have: ${have}.` : "",
     profile?.allergies.length
       ? `I cannot eat: ${profile.allergies.join(", ")}. Never suggest these.`
       : "",
+    `The dietary rules in your instructions apply to substitutions too.`,
     `Give 2-3 substitutions, best first. For each, give the amount to use
 relative to the original, say what it changes about the dish, and be honest when
 a substitution genuinely will not work well.`,

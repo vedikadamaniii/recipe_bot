@@ -7,14 +7,7 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js";
-import type {
-  DraftRecipe,
-  Ingredient,
-  PantryItem,
-  Recipe,
-  Step,
-  TasteProfile,
-} from "./schema";
+import type { DraftRecipe, Ingredient, Recipe, Step } from "./schema";
 import { inferScalingBehavior } from "./scale";
 import { isUnit } from "./units";
 
@@ -178,104 +171,4 @@ export async function listCuisines(sb: SupabaseClient): Promise<string[]> {
     counts.set(c, (counts.get(c) ?? 0) + 1);
   }
   return [...counts.keys()].sort();
-}
-
-// ---------------------------------------------------------------------------
-// Pantry
-// ---------------------------------------------------------------------------
-
-function rowToPantryItem(row: Row): PantryItem {
-  const unit = typeof row.unit === "string" ? row.unit : null;
-  return {
-    id: String(row.id),
-    userId: String(row.user_id),
-    name: String(row.name ?? ""),
-    qty: (row.qty as number) ?? null,
-    unit: isUnit(unit) ? unit : null,
-    category: (row.category as string) ?? null,
-  };
-}
-
-export async function listPantry(sb: SupabaseClient): Promise<PantryItem[]> {
-  const { data, error } = await sb
-    .from("pantry_items")
-    .select("*")
-    .order("name", { ascending: true });
-  if (error) throw new Error(`Could not load pantry: ${error.message}`);
-  return (data ?? []).map(rowToPantryItem);
-}
-
-export async function addPantryItem(
-  sb: SupabaseClient,
-  userId: string,
-  item: { name: string; qty?: number | null; unit?: string | null; category?: string | null },
-): Promise<PantryItem> {
-  // The table has a unique (user_id, name) constraint, so adding something you
-  // already have updates it rather than erroring.
-  const { data, error } = await sb
-    .from("pantry_items")
-    .upsert(
-      {
-        user_id: userId,
-        name: item.name.trim(),
-        qty: item.qty ?? null,
-        unit: item.unit ?? null,
-        category: item.category ?? null,
-      },
-      { onConflict: "user_id,name" },
-    )
-    .select()
-    .single();
-  if (error) throw new Error(`Could not add "${item.name}": ${error.message}`);
-  return rowToPantryItem(data);
-}
-
-export async function removePantryItem(sb: SupabaseClient, id: string): Promise<void> {
-  const { error } = await sb.from("pantry_items").delete().eq("id", id);
-  if (error) throw new Error(`Could not remove item: ${error.message}`);
-}
-
-// ---------------------------------------------------------------------------
-// Taste profile
-// ---------------------------------------------------------------------------
-
-export async function getTasteProfile(
-  sb: SupabaseClient,
-  userId: string,
-): Promise<TasteProfile> {
-  const { data, error } = await sb
-    .from("taste_profile")
-    .select("*")
-    .eq("user_id", userId)
-    .maybeSingle();
-  if (error) throw new Error(`Could not load taste profile: ${error.message}`);
-
-  // A signup trigger seeds this row, but fall back to an empty profile rather
-  // than crashing if it is somehow missing.
-  return {
-    userId,
-    summary: String(data?.summary ?? ""),
-    allergies: (data?.allergies as string[]) ?? [],
-    dislikes: (data?.dislikes as string[]) ?? [],
-    spiceLevel: (data?.spice_level as TasteProfile["spiceLevel"]) ?? null,
-    equipment: (data?.equipment as string[]) ?? [],
-  };
-}
-
-export async function saveTasteProfile(
-  sb: SupabaseClient,
-  profile: TasteProfile,
-): Promise<void> {
-  const { error } = await sb.from("taste_profile").upsert(
-    {
-      user_id: profile.userId,
-      summary: profile.summary,
-      allergies: profile.allergies,
-      dislikes: profile.dislikes,
-      spice_level: profile.spiceLevel,
-      equipment: profile.equipment,
-    },
-    { onConflict: "user_id" },
-  );
-  if (error) throw new Error(`Could not save taste profile: ${error.message}`);
 }

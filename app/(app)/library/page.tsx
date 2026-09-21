@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { listCuisines, listRecipes } from "@/lib/db";
+import { Bowl } from "@/components/ornaments";
 
 export default async function LibraryPage({ searchParams }: PageProps<"/library">) {
   // Request APIs are async in Next.js 16.
@@ -16,8 +17,8 @@ export default async function LibraryPage({ searchParams }: PageProps<"/library"
 
   return (
     <div>
-      <h1 className="display text-4xl mb-2">Library</h1>
-      <p className="text-ink-soft mb-6 leading-relaxed">
+      <h1 className="display text-5xl mb-2">Library</h1>
+      <p className="text-bark mb-6 leading-relaxed">
         {recipes.length === 0 && !cuisine && !search
           ? "Nothing saved yet."
           : `${recipes.length} ${recipes.length === 1 ? "recipe" : "recipes"}`}
@@ -60,40 +61,43 @@ export default async function LibraryPage({ searchParams }: PageProps<"/library"
       )}
 
       {recipes.length === 0 ? (
-        <div className="rule-top pt-6 text-ink-soft leading-relaxed">
+        <div className="card p-8 text-bark leading-relaxed text-center">
+          <span className="inline-block text-mist mb-3"><Bowl size={44} /></span>
+          <div className="max-w-sm mx-auto">
           {cuisine || search ? (
             <>Nothing matches that. Clear the filters to see everything.</>
           ) : (
             <>
               Saved recipes land here, grouped by cuisine.{" "}
-              <Link href="/generate" className="text-indigo underline">
+              <Link href="/generate" className="text-blue underline">
                 Ask for a suggestion
               </Link>{" "}
               or{" "}
-              <Link href="/import" className="text-indigo underline">
+              <Link href="/import" className="text-blue underline">
                 add one you already have
               </Link>
               .
             </>
           )}
+          </div>
         </div>
       ) : (
-        <ul className="rule-top">
+        <ul className="card divide-y divide-mist px-4">
           {recipes.map((recipe) => (
-            <li key={recipe.id} className="border-b border-rule">
+            <li key={recipe.id}>
               <Link
                 href={`/recipe/${recipe.id}`}
                 className="flex items-baseline gap-4 py-3.5 group"
               >
                 <span className="flex-1">
-                  <span className="group-hover:text-indigo">{recipe.title}</span>
-                  <span className="block text-sm text-ink-faint mt-0.5">
+                  <span className="group-hover:text-blue">{recipe.title}</span>
+                  <span className="block text-sm text-fade mt-0.5">
                     {recipe.cuisine}
                     {recipe.totalTimeMin ? ` / ${recipe.totalTimeMin} min` : ""}
                     {` / serves ${recipe.baseServings}`}
                   </span>
                 </span>
-                <span className="qty text-sm text-ink-faint shrink-0">
+                <span className="qty text-sm text-fade shrink-0">
                   {recipe.ingredients.length}
                 </span>
               </Link>

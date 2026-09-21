@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { DraftRecipe, Recipe } from "@/lib/schema";
 import { COMMON_CUISINES } from "@/lib/schema";
 import { RecipeMeta, RecipeView } from "@/components/recipe-view";
+import { Citrus, Fork, SectionHeading, Whisk } from "@/components/ornaments";
+import { HAVE_STORAGE_KEY, readHave } from "@/lib/have";
 import { saveGenerated } from "./actions";
 
 type Generated = DraftRecipe & { missingFromPantry: string[] };
@@ -20,21 +22,39 @@ const INTENTS = [
   { id: "budget", label: "Budget" },
 ];
 
-export function GenerateClient({
-  pantryCount,
-  hasProfile,
-}: {
-  pantryCount: number;
-  hasProfile: boolean;
-}) {
+/** Split the free-typed ingredient box into a clean list. */
+function toList(raw: string): string[] {
+  return raw
+    .split(/[,\n]/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+}
+
+export function GenerateClient() {
+  const [have, setHave] = useState("");
   const [ask, setAsk] = useState("");
   const [intents, setIntents] = useState<string[]>([]);
   const [cuisine, setCuisine] = useState("");
   const [centerpiece, setCenterpiece] = useState("");
-  const [pantryOnly, setPantryOnly] = useState(false);
+  const [onlyWhatIHave, setOnlyWhatIHave] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [results, setResults] = useState<Generated[]>([]);
+
+  // What you had in last time is a better starting point than a blank box,
+  // and it lets substitutions on a saved recipe stay aware of your kitchen.
+  useEffect(() => {
+    setHave(readHave().join("\n"));
+  }, []);
+
+  function persistHave(value: string) {
+    setHave(value);
+    try {
+      localStorage.setItem(HAVE_STORAGE_KEY, JSON.stringify(toList(value)));
+    } catch {
+      // Private browsing, blocked storage — not worth failing over.
+    }
+  }
 
   function toggleIntent(id: string) {
     setIntents((prev) =>
@@ -55,7 +75,8 @@ export function GenerateClient({
           intents,
           cuisine: cuisine || null,
           centerpiece: centerpiece || null,
-          pantryOnly,
+          have: toList(have),
+          useOnlyWhatIHave: onlyWhatIHave,
         }),
       });
       const data = await res.json();
@@ -68,33 +89,51 @@ export function GenerateClient({
     }
   }
 
+  const haveCount = toList(have).length;
+
   return (
     <div>
-      <h1 className="display text-4xl mb-2">What are you cooking?</h1>
-      <p className="text-ink-soft mb-7 leading-relaxed">
-        {pantryCount > 0
-          ? `Suggestions use the ${pantryCount} ${pantryCount === 1 ? "item" : "items"} in your pantry.`
-          : "Add things to your pantry and suggestions will be built around them."}
+      <h1 className="display text-5xl mb-2">What are you cooking?</h1>
+      <p className="text-bark mb-8 leading-relaxed max-w-prose">
+        Tell it what is in the kitchen and what you feel like. It already knows
+        how you eat.
       </p>
 
-      {!hasProfile && (
-        <p className="text-sm mb-6 border-l-2 border-indigo pl-3 leading-relaxed">
-          Your taste profile is empty, so these will be generic.{" "}
-          <Link href="/settings" className="text-indigo underline">
-            Add it
-          </Link>{" "}
-          and every suggestion changes.
+      <div className="card p-5 mb-6">
+        <SectionHeading icon={<Citrus />}>What you have in</SectionHeading>
+        <p className="text-fade text-sm mb-3 leading-relaxed">
+          Type what is actually there right now — commas or new lines. Nothing to
+          maintain; this is just for this search.
         </p>
-      )}
+        <textarea
+          value={have}
+          onChange={(e) => persistHave(e.target.value)}
+          rows={4}
+          className="field mb-3"
+          placeholder={"red lentils, spinach, greek yogurt\n2 onions\n400g canned tomatoes"}
+          aria-label="What you have in the kitchen"
+        />
+        {haveCount > 0 && (
+          <label className="flex items-center gap-2 text-sm text-bark">
+            <input
+              type="checkbox"
+              checked={onlyWhatIHave}
+              onChange={(e) => setOnlyWhatIHave(e.target.checked)}
+            />
+            Stick to these {haveCount} things
+          </label>
+        )}
+      </div>
 
-      <div className="rule-top pt-5 mb-8">
+      <div className="card p-5 mb-8">
+        <SectionHeading icon={<Fork />}>What you feel like</SectionHeading>
         <textarea
           value={ask}
           onChange={(e) => setAsk(e.target.value)}
           rows={2}
-          className="field mb-4"
+          className="field mb-4 mt-1"
           placeholder="something warming I can eat cold tomorrow"
-          aria-label="What you feel like"
+          aria-label="What you feel like eating"
         />
 
         <div className="flex flex-wrap gap-2 mb-4">
@@ -110,9 +149,9 @@ export function GenerateClient({
           ))}
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-3 mb-4">
+        <div className="grid sm:grid-cols-2 gap-3 mb-5">
           <label className="block">
-            <span className="block text-sm text-ink-soft mb-1">Cuisine</span>
+            <span className="block text-sm text-bark mb-1">Cuisine</span>
             <select
               value={cuisine}
               onChange={(e) => setCuisine(e.target.value)}
@@ -127,9 +166,7 @@ export function GenerateClient({
             </select>
           </label>
           <label className="block">
-            <span className="block text-sm text-ink-soft mb-1">
-              Built around
-            </span>
+            <span className="block text-sm text-bark mb-1">Built around</span>
             <input
               value={centerpiece}
               onChange={(e) => setCenterpiece(e.target.value)}
@@ -139,38 +176,24 @@ export function GenerateClient({
           </label>
         </div>
 
-        {pantryCount > 0 && (
-          <label className="flex items-center gap-2 mb-5 text-sm">
-            <input
-              type="checkbox"
-              checked={pantryOnly}
-              onChange={(e) => setPantryOnly(e.target.checked)}
-            />
-            Only what I already have
-          </label>
-        )}
-
-        <button
-          onClick={generate}
-          className="btn btn-primary"
-          disabled={loading}
-        >
-          {loading ? "Thinking" : "Suggest recipes"}
+        <button onClick={generate} className="btn btn-primary" disabled={loading}>
+          <Whisk size={17} />
+          {loading ? "Working on it" : "Suggest recipes"}
         </button>
 
-        {error && <p className="text-madder text-sm mt-4 leading-relaxed">{error}</p>}
+        {loading && (
+          <p className="text-fade text-sm mt-3 leading-relaxed">
+            Three full recipes takes around half a minute on the free tier.
+          </p>
+        )}
+        {error && <p className="text-brick text-sm mt-4 leading-relaxed">{error}</p>}
       </div>
 
       {results.length > 0 && (
-        <div>
-          <h2 className="text-sm text-ink-soft mb-4">
-            {results.length} suggestions
-          </h2>
-          <div className="space-y-10">
-            {results.map((recipe, i) => (
-              <ResultCard key={`${recipe.title}-${i}`} recipe={recipe} />
-            ))}
-          </div>
+        <div className="space-y-8">
+          {results.map((recipe, i) => (
+            <ResultCard key={`${recipe.title}-${i}`} recipe={recipe} />
+          ))}
         </div>
       )}
     </div>
@@ -183,7 +206,6 @@ function ResultCard({ recipe }: { recipe: Generated }) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
 
-  // The view component works on a full Recipe; a generated one has no id yet.
   const asRecipe: Recipe = {
     ...recipe,
     id: "preview",
@@ -207,21 +229,18 @@ function ResultCard({ recipe }: { recipe: Generated }) {
   const missing = recipe.missingFromPantry ?? [];
 
   return (
-    <div className="rule-top pt-5">
-      <h3 className="display text-2xl mb-1">{recipe.title}</h3>
+    <div className="card p-5">
+      <h3 className="display text-3xl mb-1">{recipe.title}</h3>
       <RecipeMeta recipe={asRecipe} />
       {recipe.description && (
-        <p className="mt-3 leading-relaxed text-ink-soft">{recipe.description}</p>
+        <p className="mt-3 leading-relaxed text-bark">{recipe.description}</p>
       )}
 
-      {/* The single most useful signal when deciding what to cook tonight. */}
-      <p className="text-sm mt-3">
+      <p className="text-sm mt-4">
         {missing.length === 0 ? (
-          <span className="text-indigo">You have everything.</span>
+          <span className="text-blue">You have everything for this.</span>
         ) : (
-          <span className="text-ink-soft">
-            Need to buy: {missing.join(", ")}
-          </span>
+          <span className="text-bark">Still need: {missing.join(", ")}</span>
         )}
       </p>
 
@@ -239,10 +258,10 @@ function ResultCard({ recipe }: { recipe: Generated }) {
           </button>
         )}
       </div>
-      {error && <p className="text-madder text-sm mt-3">{error}</p>}
+      {error && <p className="text-brick text-sm mt-3">{error}</p>}
 
       {open && (
-        <div className="mt-6">
+        <div className="mt-6 pt-5 border-t border-mist">
           <RecipeView recipe={asRecipe} />
         </div>
       )}

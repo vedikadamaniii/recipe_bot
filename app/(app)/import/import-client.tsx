@@ -5,6 +5,7 @@ import { useState } from "react";
 import type { DraftRecipe, Recipe } from "@/lib/schema";
 import { COMMON_CUISINES } from "@/lib/schema";
 import { RecipeView } from "@/components/recipe-view";
+import { Knife } from "@/components/ornaments";
 import { saveGenerated } from "@/app/(app)/generate/actions";
 
 type Mode = "url" | "image" | "text";
@@ -78,8 +79,8 @@ export function ImportClient() {
 
   return (
     <div className="max-w-xl">
-      <h1 className="display text-4xl mb-2">Add a recipe</h1>
-      <p className="text-ink-soft mb-7 leading-relaxed">
+      <h1 className="display text-5xl mb-2">Add a recipe</h1>
+      <p className="text-bark mb-7 leading-relaxed">
         However it reaches you, it ends up in the same structured form — so it
         scales and converts like everything else.
       </p>
@@ -100,8 +101,8 @@ export function ImportClient() {
         ))}
       </div>
 
-      <div className="rule-top pt-5">
-        <p className="text-sm text-ink-soft mb-4 leading-relaxed">
+      <div className="card p-5">
+        <p className="text-sm text-bark mb-4 leading-relaxed">
           {MODES.find((m) => m.id === mode)!.blurb}
         </p>
 
@@ -137,7 +138,7 @@ export function ImportClient() {
               aria-label="Recipe image"
             />
             {imageName && (
-              <p className="text-sm text-ink-soft mt-2">Selected: {imageName}</p>
+              <p className="text-sm text-bark mt-2">Selected: {imageName}</p>
             )}
           </div>
         )}
@@ -147,10 +148,11 @@ export function ImportClient() {
           className="btn btn-primary"
           disabled={loading || !ready}
         >
+          <Knife size={17} />
           {loading ? "Reading" : "Read recipe"}
         </button>
 
-        {error && <p className="text-madder text-sm mt-4 leading-relaxed">{error}</p>}
+        {error && <p className="text-brick text-sm mt-4 leading-relaxed">{error}</p>}
       </div>
     </div>
   );
@@ -202,8 +204,8 @@ function ReviewDraft({ draft, onBack }: { draft: DraftRecipe; onBack: () => void
   if (savedId) {
     return (
       <div className="max-w-xl">
-        <h1 className="display text-3xl mb-3">Saved</h1>
-        <p className="text-ink-soft mb-6">{title} is in your library.</p>
+        <h1 className="display text-4xl mb-3">Saved</h1>
+        <p className="text-bark mb-6">{title} is in your library.</p>
         <div className="flex gap-2">
           <Link href={`/recipe/${savedId}`} className="btn btn-primary">
             Open it
@@ -218,22 +220,22 @@ function ReviewDraft({ draft, onBack }: { draft: DraftRecipe; onBack: () => void
 
   return (
     <div>
-      <button onClick={onBack} className="text-sm text-ink-faint hover:text-ink mb-3">
+      <button onClick={onBack} className="text-sm text-fade hover:text-ink mb-3">
         Back
       </button>
-      <h1 className="display text-3xl mb-2">Check this before saving</h1>
-      <p className="text-ink-soft mb-6 leading-relaxed max-w-prose">
+      <h1 className="display text-4xl mb-2">Check this before saving</h1>
+      <p className="text-bark mb-6 leading-relaxed max-w-prose">
         Quantities are read from the original. Scan them — a misread fraction is
         the one mistake worth catching now rather than mid-cook.
       </p>
 
       <div className="grid sm:grid-cols-3 gap-3 mb-7">
         <label className="block sm:col-span-2">
-          <span className="block text-sm text-ink-soft mb-1">Title</span>
+          <span className="block text-sm text-bark mb-1">Title</span>
           <input value={title} onChange={(e) => setTitle(e.target.value)} className="field" />
         </label>
         <label className="block">
-          <span className="block text-sm text-ink-soft mb-1">Serves</span>
+          <span className="block text-sm text-bark mb-1">Serves</span>
           <input
             type="number"
             min={1}
@@ -244,7 +246,7 @@ function ReviewDraft({ draft, onBack }: { draft: DraftRecipe; onBack: () => void
           />
         </label>
         <label className="block sm:col-span-3">
-          <span className="block text-sm text-ink-soft mb-1">Cuisine</span>
+          <span className="block text-sm text-bark mb-1">Cuisine</span>
           <select
             value={cuisine}
             onChange={(e) => setCuisine(e.target.value)}
@@ -261,7 +263,7 @@ function ReviewDraft({ draft, onBack }: { draft: DraftRecipe; onBack: () => void
 
       <RecipeView recipe={preview} />
 
-      <div className="rule-top mt-8 pt-5 flex gap-2">
+      <div className="mt-8 pt-5 border-t border-mist flex gap-2">
         <button onClick={save} className="btn btn-primary" disabled={saving}>
           {saving ? "Saving" : "Save to library"}
         </button>
@@ -269,7 +271,7 @@ function ReviewDraft({ draft, onBack }: { draft: DraftRecipe; onBack: () => void
           Discard
         </button>
       </div>
-      {error && <p className="text-madder text-sm mt-3">{error}</p>}
+      {error && <p className="text-brick text-sm mt-3">{error}</p>}
     </div>
   );
 }

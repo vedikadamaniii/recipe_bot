@@ -1,35 +1,38 @@
 import Link from "next/link";
+import { Bowl, Knife, Sprig, Whisk } from "@/components/ornaments";
 
 const NAV = [
-  { href: "/generate", label: "Cook" },
-  { href: "/pantry", label: "Pantry" },
-  { href: "/library", label: "Library" },
-  { href: "/import", label: "Add" },
-  { href: "/settings", label: "Taste" },
+  { href: "/generate", label: "Cook", icon: Whisk },
+  { href: "/library", label: "Library", icon: Bowl },
+  { href: "/import", label: "Add", icon: Knife },
 ];
 
 export default function AppLayout({ children }: LayoutProps<"/">) {
   return (
     <>
-      <header className="sticky top-0 z-20 bg-paper border-b border-rule">
-        <div className="mx-auto max-w-3xl px-5 h-14 flex items-center gap-5">
-          <Link href="/generate" className="display text-lg shrink-0">
-            Recipe Bot
+      <header className="sticky top-0 z-20 bg-cream/95 backdrop-blur border-b border-mist">
+        <div className="mx-auto max-w-3xl px-5 h-16 flex items-center gap-6">
+          <Link href="/generate" className="flex items-center gap-2 shrink-0">
+            <span className="text-cocoa">
+              <Sprig size={22} />
+            </span>
+            <span className="display text-xl">Recipe Bot</span>
           </Link>
-          <nav className="flex-1 flex items-center gap-4 overflow-x-auto text-sm">
-            {NAV.map((item) => (
+          <nav className="flex-1 flex items-center justify-end gap-1 text-sm">
+            {NAV.map(({ href, label, icon: Icon }) => (
               <Link
-                key={item.href}
-                href={item.href}
-                className="text-ink-soft hover:text-ink whitespace-nowrap py-1"
+                key={href}
+                href={href}
+                className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-bark hover:text-cocoa hover:bg-linen whitespace-nowrap"
               >
-                {item.label}
+                <Icon size={16} />
+                {label}
               </Link>
             ))}
           </nav>
         </div>
       </header>
-      <main className="flex-1 mx-auto w-full max-w-3xl px-5 py-8">{children}</main>
+      <main className="flex-1 mx-auto w-full max-w-3xl px-5 py-9">{children}</main>
     </>
   );
 }
