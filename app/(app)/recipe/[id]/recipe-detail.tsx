@@ -7,7 +7,13 @@ import { readHave } from "@/lib/have";
 
 type Swap = { name: string; amount: string; effect: string; caveat?: string | null };
 
-export function RecipeDetail({ recipe }: { recipe: Recipe }) {
+export function RecipeDetail({
+  recipe,
+  canSubstitute,
+}: {
+  recipe: Recipe;
+  canSubstitute: boolean;
+}) {
   const [target, setTarget] = useState<string | null>(null);
   const [swaps, setSwaps] = useState<Swap[]>([]);
   const [loading, setLoading] = useState(false);
@@ -36,7 +42,10 @@ export function RecipeDetail({ recipe }: { recipe: Recipe }) {
 
   return (
     <>
-      <RecipeView recipe={recipe} onAskSubstitute={askSubstitute} />
+      <RecipeView
+        recipe={recipe}
+        onAskSubstitute={canSubstitute ? askSubstitute : undefined}
+      />
 
       {target && (
         <aside className="card p-5 mt-9">

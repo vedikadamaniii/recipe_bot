@@ -1,0 +1,459 @@
+{
+  "recipes": [
+    {
+      "title": "Ground Chicken and Red Lentil Keema Dal",
+      "description": "A thick, protein-dense hybrid of keema and dal. The red lentils melt into a sauce that coats the chicken, keeping it moist for reheating.",
+      "cuisine": "Indian",
+      "tags": [
+        "high-protein",
+        "meal-prep",
+        "instant-pot"
+      ],
+      "baseServings": 3,
+      "totalTimeMin": 40,
+      "ingredients": [
+        {
+          "qty": 1,
+          "unit": "tbsp",
+          "item": "oil",
+          "prep": null,
+          "group": null,
+          "scaling": "manual"
+        },
+        {
+          "qty": 1,
+          "unit": "lb",
+          "item": "ground chicken",
+          "prep": null,
+          "group": null,
+          "scaling": "linear"
+        },
+        {
+          "qty": 1,
+          "unit": null,
+          "item": "onion",
+          "prep": "finely diced",
+          "group": null,
+          "scaling": "linear"
+        },
+        {
+          "qty": 2,
+          "unit": "tbsp",
+          "item": "ginger-garlic paste",
+          "prep": null,
+          "group": null,
+          "scaling": "linear"
+        },
+        {
+          "qty": 0.5,
+          "unit": "cup",
+          "item": "red lentils",
+          "prep": "rinsed",
+          "group": null,
+          "scaling": "linear"
+        },
+        {
+          "qty": 1,
+          "unit": "cup",
+          "item": "crushed tomatoes",
+          "prep": null,
+          "group": null,
+          "scaling": "linear"
+        },
+        {
+          "qty": 1,
+          "unit": "tsp",
+          "item": "turmeric",
+          "prep": null,
+          "group": null,
+          "scaling": "manual"
+        },
+        {
+          "qty": 1,
+          "unit": "tbsp",
+          "item": "garam masala",
+          "prep": null,
+          "group": null,
+          "scaling": "manual"
+        },
+        {
+          "qty": 1,
+          "unit": "tsp",
+          "item": "chilli powder",
+          "prep": null,
+          "group": null,
+          "scaling": "manual"
+        },
+        {
+          "qty": 1,
+          "unit": "tsp",
+          "item": "salt",
+          "prep": null,
+          "group": null,
+          "scaling": "manual"
+        },
+        {
+          "qty": 1,
+          "unit": "cup",
+          "item": "water",
+          "prep": null,
+          "group": null,
+          "scaling": "linear"
+        },
+        {
+          "qty": 2,
+          "unit": "cup",
+          "item": "frozen spinach",
+          "prep": null,
+          "group": null,
+          "scaling": "linear"
+        },
+        {
+          "qty": 1,
+          "unit": "cup",
+          "item": "frozen green beans",
+          "prep": null,
+          "group": null,
+          "scaling": "linear"
+        }
+      ],
+      "steps": [
+        {
+          "n": 1,
+          "text": "Set the Instant Pot to Sauté mode and add oil.",
+          "minutes": null
+        },
+        {
+          "n": 2,
+          "text": "Add the ground chicken and brown it thoroughly, breaking it into small bits with a wooden spoon until no pink remains.",
+          "minutes": null
+        },
+        {
+          "n": 3,
+          "text": "Add the diced onion and cook until softened and starting to brown at the edges.",
+          "minutes": null
+        },
+        {
+          "n": 4,
+          "text": "Stir in the ginger-garlic paste, turmeric, garam masala, and chilli powder: cook for 1 minute until fragrant.",
+          "minutes": null
+        },
+        {
+          "n": 5,
+          "text": "Add the red lentils, crushed tomatoes, salt, and water: stir well to scrape any browned bits off the bottom.",
+          "minutes": null
+        },
+        {
+          "n": 6,
+          "text": "Lock the lid and set to Pressure Cook on High for 5 minutes.",
+          "minutes": null
+        },
+        {
+          "n": 7,
+          "text": "Perform a natural release for 10 minutes, then vent the remaining steam.",
+          "minutes": null
+        },
+        {
+          "n": 8,
+          "text": "Stir in the frozen spinach and green beans: the residual heat will cook them in 2 or 3 minutes.",
+          "minutes": null
+        },
+        {
+          "n": 9,
+          "text": "Adjust salt if needed and serve over a small portion of basmati rice.",
+          "minutes": null
+        }
+      ],
+      "sourceType": "generated",
+      "sourceUrl": null,
+      "imageUrl": null,
+      "rating": null,
+      "notes": null,
+      "missingFromPantry": [
+        "ground chicken",
+        "frozen green beans"
+      ]
+    },
+    {
+      "title": "Air-Fried Paneer and Edamame Tikka Bowls",
+      "description": "Crispy charred paneer with high-protein edamame. The yogurt marinade keeps the paneer tender through multiple reheats.",
+      "cuisine": "Indian",
+      "tags": [
+        "high-protein",
+        "vegetarian",
+        "air-fryer"
+      ],
+      "baseServings": 3,
+      "totalTimeMin": 25,
+      "ingredients": [
+        {
+          "qty": 400,
+          "unit": "g",
+          "item": "paneer",
+          "prep": "cubed into 1-inch pieces",
+          "group": null,
+          "scaling": "linear"
+        },
+        {
+          "qty": 1,
+          "unit": "cup",
+          "item": "frozen edamame",
+          "prep": "shelled",
+          "group": null,
+          "scaling": "linear"
+        },
+        {
+          "qty": 0.5,
+          "unit": "cup",
+          "item": "greek yogurt",
+          "prep": null,
+          "group": null,
+          "scaling": "linear"
+        },
+        {
+          "qty": 1,
+          "unit": "tbsp",
+          "item": "ginger-garlic paste",
+          "prep": null,
+          "group": null,
+          "scaling": "linear"
+        },
+        {
+          "qty": 1,
+          "unit": "tsp",
+          "item": "garam masala",
+          "prep": null,
+          "group": null,
+          "scaling": "manual"
+        },
+        {
+          "qty": 1,
+          "unit": "tsp",
+          "item": "chilli powder",
+          "prep": null,
+          "group": null,
+          "scaling": "manual"
+        },
+        {
+          "qty": 0.5,
+          "unit": "tsp",
+          "item": "salt",
+          "prep": null,
+          "group": null,
+          "scaling": "manual"
+        },
+        {
+          "qty": 1,
+          "unit": "tbsp",
+          "item": "oil",
+          "prep": null,
+          "group": null,
+          "scaling": "manual"
+        },
+        {
+          "qty": 1,
+          "unit": "cup",
+          "item": "basmati rice",
+          "prep": null,
+          "group": null,
+          "scaling": "linear"
+        },
+        {
+          "qty": 1,
+          "unit": null,
+          "item": "onion",
+          "prep": "sliced into thick wedges",
+          "group": null,
+          "scaling": "linear"
+        }
+      ],
+      "steps": [
+        {
+          "n": 1,
+          "text": "In a bowl, whisk the greek yogurt, ginger-garlic paste, garam masala, chilli powder, and salt.",
+          "minutes": null
+        },
+        {
+          "n": 2,
+          "text": "Add the paneer cubes, edamame, and onion wedges to the yogurt mixture and toss to coat thoroughly.",
+          "minutes": null
+        },
+        {
+          "n": 3,
+          "text": "Drizzle with oil and toss once more.",
+          "minutes": null
+        },
+        {
+          "n": 4,
+          "text": "Preheat the air fryer to 400F.",
+          "minutes": null
+        },
+        {
+          "n": 5,
+          "text": "Place the paneer mixture in the air fryer basket in a single layer: work in batches if needed.",
+          "minutes": null
+        },
+        {
+          "n": 6,
+          "text": "Air fry for 8 to 10 minutes, shaking the basket halfway through, until the paneer has charred edges and the onions are soft.",
+          "minutes": null
+        },
+        {
+          "n": 7,
+          "text": "While the paneer cooks, prepare the basmati rice on the stove or in the Instant Pot.",
+          "minutes": null
+        },
+        {
+          "n": 8,
+          "text": "Divide the rice into three containers and top with the air-fried paneer and edamame mixture.",
+          "minutes": null
+        }
+      ],
+      "sourceType": "generated",
+      "sourceUrl": null,
+      "imageUrl": null,
+      "rating": null,
+      "notes": null,
+      "missingFromPantry": [
+        "frozen edamame"
+      ]
+    },
+    {
+      "title": "Salmon with Garlic-Spinach Rice",
+      "description": "Assertively seasoned salmon paired with a vibrant, creamy spinach rice. The yogurt-based sauce provides moisture without the heaviness of cream.",
+      "cuisine": "Italian-leaning",
+      "tags": [
+        "high-protein",
+        "oven",
+        "seafood"
+      ],
+      "baseServings": 3,
+      "totalTimeMin": 30,
+      "ingredients": [
+        {
+          "qty": 1,
+          "unit": "lb",
+          "item": "salmon fillets",
+          "prep": null,
+          "group": null,
+          "scaling": "linear"
+        },
+        {
+          "qty": 1,
+          "unit": "tbsp",
+          "item": "dijon mustard",
+          "prep": null,
+          "group": null,
+          "scaling": "manual"
+        },
+        {
+          "qty": 1,
+          "unit": "tsp",
+          "item": "chilli powder",
+          "prep": null,
+          "group": null,
+          "scaling": "manual"
+        },
+        {
+          "qty": 1,
+          "unit": "cup",
+          "item": "basmati rice",
+          "prep": null,
+          "group": null,
+          "scaling": "linear"
+        },
+        {
+          "qty": 2,
+          "unit": "cup",
+          "item": "fresh spinach",
+          "prep": null,
+          "group": null,
+          "scaling": "linear"
+        },
+        {
+          "qty": 3,
+          "unit": null,
+          "item": "garlic cloves",
+          "prep": "peeled",
+          "group": null,
+          "scaling": "linear"
+        },
+        {
+          "qty": 0.5,
+          "unit": "cup",
+          "item": "greek yogurt",
+          "prep": null,
+          "group": null,
+          "scaling": "linear"
+        },
+        {
+          "qty": 1,
+          "unit": null,
+          "item": "lemon",
+          "prep": "juiced",
+          "group": null,
+          "scaling": "linear"
+        },
+        {
+          "qty": 0.5,
+          "unit": "tsp",
+          "item": "salt",
+          "prep": null,
+          "group": null,
+          "scaling": "manual"
+        }
+      ],
+      "steps": [
+        {
+          "n": 1,
+          "text": "Preheat the oven to 400F.",
+          "minutes": null
+        },
+        {
+          "n": 2,
+          "text": "Place salmon fillets on a lined baking tray: spread with dijon mustard and dust heavily with chilli powder and salt.",
+          "minutes": null
+        },
+        {
+          "n": 3,
+          "text": "Roast the salmon for 12 to 14 minutes until the thickest part flakes easily with a fork.",
+          "minutes": null
+        },
+        {
+          "n": 4,
+          "text": "While salmon roasts, cook the basmati rice in the Instant Pot with 1.25 cups of water for 6 minutes: quick release.",
+          "minutes": null
+        },
+        {
+          "n": 5,
+          "text": "In a small pan, sauté the garlic cloves and spinach with a splash of water until wilted.",
+          "minutes": null
+        },
+        {
+          "n": 6,
+          "text": "Transfer the spinach and garlic to a tall jar, add the greek yogurt and lemon juice, and blend with an immersion blender until smooth.",
+          "minutes": null
+        },
+        {
+          "n": 7,
+          "text": "Fold the green yogurt sauce into the cooked rice while it is still warm.",
+          "minutes": null
+        },
+        {
+          "n": 8,
+          "text": "Divide the green rice into containers and top each with a salmon fillet.",
+          "minutes": null
+        }
+      ],
+      "sourceType": "generated",
+      "sourceUrl": null,
+      "imageUrl": null,
+      "rating": null,
+      "notes": null,
+      "missingFromPantry": [
+        "salmon fillets",
+        "lemon"
+      ]
+    }
+  ]
+}

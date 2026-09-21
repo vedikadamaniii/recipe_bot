@@ -7,6 +7,7 @@ import {
   generateJson,
 } from "@/lib/gemini";
 import type { DraftRecipe } from "@/lib/schema";
+import { isUnlocked } from "@/lib/access";
 import { assertPublicUrl } from "@/lib/url-guard";
 
 const IMPORT_INSTRUCTION = `You transcribe recipes into structured data.
@@ -128,6 +129,13 @@ async function fromImages(dataUrls: string[]): Promise<DraftRecipe> {
 }
 
 export async function POST(request: NextRequest) {
+  if (!(await isUnlocked())) {
+    return NextResponse.json(
+      { error: "Importing is limited to the owner of this instance." },
+      { status: 403 },
+    );
+  }
+
   let body: { type?: string; url?: string; text?: string; images?: string[] };
   try {
     body = await request.json();

@@ -31,7 +31,13 @@ function toList(raw: string): string[] {
     .filter(Boolean);
 }
 
-export function GenerateClient() {
+export function GenerateClient({
+  unlocked,
+  liveRemaining,
+}: {
+  unlocked: boolean;
+  liveRemaining: number;
+}) {
   const [have, setHave] = useState("");
   const [ask, setAsk] = useState("");
   const [intents, setIntents] = useState<string[]>([]);
@@ -41,6 +47,7 @@ export function GenerateClient() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [results, setResults] = useState<Generated[]>([]);
+  const [isSavedExample, setIsSavedExample] = useState(false);
 
   // What you had in last time is a better starting point than a blank box,
   // and it lets substitutions on a saved recipe stay aware of your kitchen.
@@ -83,6 +90,7 @@ export function GenerateClient() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Generation failed.");
       setResults(data.recipes);
+      setIsSavedExample(Boolean(data.saved));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Generation failed.");
     } finally {
@@ -182,13 +190,29 @@ export function GenerateClient() {
             Three full recipes takes around half a minute on the free tier.
           </p>
         )}
+
+        {!unlocked && !loading && (
+          <p className="text-fade text-sm mt-3 leading-relaxed">
+            {liveRemaining > 0
+              ? `${liveRemaining} live generations left today. After that you get a saved example.`
+              : "Today's live generations are used up. You will get a saved example."}
+          </p>
+        )}
         {error && <p className="text-brick text-sm mt-4 leading-relaxed">{error}</p>}
       </div>
+
+      {isSavedExample && results.length > 0 && (
+        <p className="text-sm mb-5 border-l-2 border-turmeric pl-3 leading-relaxed text-bark">
+          This is a saved example from a real generation, not a fresh one.
+          The daily live allowance is spent, so the recipes below will not match
+          what you typed. Everything else on the site still works as normal.
+        </p>
+      )}
 
       {results.length > 0 && (
         <div className="space-y-8">
           {results.map((recipe, i) => (
-            <ResultCard key={`${recipe.title}-${i}`} recipe={recipe} />
+            <ResultCard key={`${recipe.title}-${i}`} recipe={recipe} canSave={unlocked} />
           ))}
         </div>
       )}
@@ -196,7 +220,7 @@ export function GenerateClient() {
   );
 }
 
-function ResultCard({ recipe }: { recipe: Generated }) {
+function ResultCard({ recipe, canSave }: { recipe: Generated; canSave: boolean }) {
   const [open, setOpen] = useState(false);
   const [saved, setSaved] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -244,7 +268,7 @@ function ResultCard({ recipe }: { recipe: Generated }) {
         <button className="btn btn-quiet" onClick={() => setOpen((v) => !v)}>
           {open ? "Hide recipe" : "See recipe"}
         </button>
-        {saved ? (
+        {!canSave ? null : saved ? (
           <Link href={`/recipe/${saved}`} className="btn btn-quiet">
             Saved. Open it
           </Link>

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { getRecipe } from "@/lib/db";
 import { RecipeDetail } from "./recipe-detail";
+import { isUnlocked } from "@/lib/access";
 
 export default async function RecipePage({ params }: PageProps<"/recipe/[id]">) {
   // Route params are async in Next.js 16.
@@ -11,6 +12,8 @@ export default async function RecipePage({ params }: PageProps<"/recipe/[id]">) 
   const supabase = await createClient();
   const recipe = await getRecipe(supabase, id);
   if (!recipe) notFound();
+
+  const unlocked = await isUnlocked();
 
   return (
     <div>
@@ -40,7 +43,7 @@ export default async function RecipePage({ params }: PageProps<"/recipe/[id]">) 
         </p>
       )}
 
-      <RecipeDetail recipe={recipe} />
+      <RecipeDetail recipe={recipe} canSubstitute={unlocked} />
     </div>
   );
 }

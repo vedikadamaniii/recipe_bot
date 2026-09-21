@@ -2,8 +2,16 @@ import { NextResponse, type NextRequest } from "next/server";
 import { buildSubstitutionPrompt, buildSystemInstruction } from "@/lib/prompt";
 import { TASTE } from "@/lib/taste";
 import { GeminiUnavailableError, SUBSTITUTION_SCHEMA, generateJson } from "@/lib/gemini";
+import { isUnlocked } from "@/lib/access";
 
 export async function POST(request: NextRequest) {
+  if (!(await isUnlocked())) {
+    return NextResponse.json(
+      { error: "Substitutions are limited to the owner of this instance." },
+      { status: 403 },
+    );
+  }
+
   const { ingredient, recipeTitle, have } = await request.json();
   if (!ingredient) {
     return NextResponse.json({ error: "No ingredient given." }, { status: 400 });
