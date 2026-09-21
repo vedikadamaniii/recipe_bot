@@ -152,7 +152,21 @@ export function ImportClient() {
           {loading ? "Reading" : "Read recipe"}
         </button>
 
-        {error && <p className="text-brick text-sm mt-4 leading-relaxed">{error}</p>}
+        {error && (
+          <div className="mt-4">
+            <p className="text-brick text-sm leading-relaxed">{error}</p>
+            {mode === "url" && (
+              <div className="flex gap-2 mt-3">
+                <button className="btn btn-quiet" onClick={() => { setMode("text"); setError(""); }}>
+                  Paste it instead
+                </button>
+                <button className="btn btn-quiet" onClick={() => { setMode("image"); setError(""); }}>
+                  Use a photo
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

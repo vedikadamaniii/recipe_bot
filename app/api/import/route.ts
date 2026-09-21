@@ -35,7 +35,23 @@ async function fromUrl(rawUrl: string): Promise<DraftRecipe> {
     signal: AbortSignal.timeout(15_000),
   });
 
-  if (!res.ok) throw new Error(`Could not read that page (HTTP ${res.status}).`);
+  if (!res.ok) {
+    // A lot of recipe sites sit behind bot protection that serves a JavaScript
+    // challenge to anything that is not a real browser. That is a deliberate
+    // choice by the site, not something to work around, so say so plainly and
+    // point at the routes that do work.
+    if (res.status === 403 || res.status === 401 || res.status === 429) {
+      throw new Error(
+        "That site blocks automated readers, so the page cannot be fetched here. " +
+          "Open it in your browser and use Paste, or screenshot it and use Photo. " +
+          "Both read the same recipe.",
+      );
+    }
+    if (res.status === 404) {
+      throw new Error("That page does not exist. Check the link.");
+    }
+    throw new Error(`That page could not be read (HTTP ${res.status}).`);
+  }
 
   const html = await res.text();
 
