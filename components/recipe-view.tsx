@@ -132,7 +132,7 @@ export function RecipeView({
                     {ing.item}
                     {ing.prep && <span className="text-bark">, {ing.prep}</span>}
                     {ing.scaledQty === null && (
-                      <span className="text-fade"> — to taste</span>
+                      <span className="text-fade">, to taste</span>
                     )}
                     {ing.needsTasteCheck && (
                       <span className="text-turmeric text-sm"> · taste and adjust</span>

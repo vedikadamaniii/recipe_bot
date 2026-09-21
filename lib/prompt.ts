@@ -46,6 +46,7 @@ const OUTPUT_RULES = `Rules for every recipe you write:
   three different things to do.
 - Do not describe the food as delicious, amazing, or perfect. Describe what it
   tastes like and what to look for while cooking.
+- Never use em dashes. Use a comma, a colon, or a full stop instead.
 - Never write "cook until done", "add spices" or "season to taste" without
   first giving a starting amount. "Start with 1 tsp salt and adjust at the end"
   is fine; "season to taste" on its own is not.

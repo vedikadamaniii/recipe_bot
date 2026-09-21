@@ -81,7 +81,7 @@ export function ImportClient() {
     <div className="max-w-xl">
       <h1 className="display text-5xl mb-2">Add a recipe</h1>
       <p className="text-bark mb-7 leading-relaxed">
-        However it reaches you, it ends up in the same structured form — so it
+        However it reaches you, it ends up in the same structured form, so it
         scales and converts like everything else.
       </p>
 
@@ -225,7 +225,7 @@ function ReviewDraft({ draft, onBack }: { draft: DraftRecipe; onBack: () => void
       </button>
       <h1 className="display text-4xl mb-2">Check this before saving</h1>
       <p className="text-bark mb-6 leading-relaxed max-w-prose">
-        Quantities are read from the original. Scan them — a misread fraction is
+        Quantities are read from the original. Scan them: a misread fraction is
         the one mistake worth catching now rather than mid-cook.
       </p>
 

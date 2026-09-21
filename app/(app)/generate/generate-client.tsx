@@ -103,8 +103,8 @@ export function GenerateClient() {
       <div className="card p-5 mb-6">
         <SectionHeading icon={<Citrus />}>What you have in</SectionHeading>
         <p className="text-fade text-sm mb-3 leading-relaxed">
-          Type what is actually there right now — commas or new lines. Nothing to
-          maintain; this is just for this search.
+          Type what is actually there right now, separated by commas or new lines.
+          Nothing to maintain; this is just for this search.
         </p>
         <textarea
           value={have}
@@ -251,7 +251,7 @@ function ResultCard({ recipe }: { recipe: Generated }) {
         </button>
         {saved ? (
           <Link href={`/recipe/${saved}`} className="btn btn-quiet">
-            Saved — open it
+            Saved. Open it
           </Link>
         ) : (
           <button className="btn btn-primary" onClick={save} disabled={saving}>

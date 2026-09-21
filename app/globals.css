@@ -155,12 +155,6 @@ body {
   gap: 0.6rem;
   color: var(--bark);
 }
-.section-rule::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: var(--mist);
-}
 
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
