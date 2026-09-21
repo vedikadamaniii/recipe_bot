@@ -45,7 +45,24 @@ const OUTPUT_RULES = `Rules for every recipe you write:
 - Steps are numbered, and each one is a single action. No step should contain
   three different things to do.
 - Do not describe the food as delicious, amazing, or perfect. Describe what it
-  tastes like and what to look for while cooking.`;
+  tastes like and what to look for while cooking.
+- Never write "cook until done", "add spices" or "season to taste" without
+  first giving a starting amount. "Start with 1 tsp salt and adjust at the end"
+  is fine; "season to taste" on its own is not.
+- Give visual and physical cues, not just times: "until the onions are
+  translucent", "until a carrot gives easily to a fork".
+- Say what can happen at the same time, so nothing sits waiting.
+- Default to 3 servings unless told otherwise — that is the usual batch.
+
+Appliance instructions must be complete enough to follow without guessing:
+- Instant Pot: say which mode (Pressure Cook, Rice, Sauté), the pressure time,
+  natural or quick release, and the exact liquid quantity.
+- Air fryer or oven: give the temperature, the approximate time, whether to
+  flip, shake or rotate, and rack position when it matters.
+- Choose whichever appliance genuinely makes the dish easier or better.
+
+If a quantity is given in katori, work in katori rather than converting, unless
+the conversion is actually useful.`;
 
 /** Hard constraints, stated where the model cannot miss them. */
 function constraintBlock(profile: TasteProfile): string {
@@ -90,6 +107,20 @@ recipe that requires equipment not on this list.`,
     );
   }
 
+  if (profile.favourites?.length) {
+    lines.push(
+      `Ingredients to reach for first, all of which are liked:
+${profile.favourites.join(", ")}.`,
+    );
+  }
+
+  if (profile.staples?.length) {
+    lines.push(
+      `Usually in the cupboard, so you may assume these without listing them as
+things to buy: ${profile.staples.join(", ")}. Do not assume anything else.`,
+    );
+  }
+
   return lines.join("\n\n");
 }
 
@@ -125,6 +156,10 @@ const INTENT_HINTS: Record<string, string> = {
   light: "Light, fresh, and not heavy to digest.",
   budget: "Cheap, common ingredients.",
   "one-pot": "Everything in a single pan or pot; minimal washing up.",
+  breakfast:
+    "Breakfast: savoury, fast enough for a weekday morning, and no eggs unless " +
+    "asked. Sourdough toast with cottage cheese and savoury toppings is the " +
+    "baseline to improve on, and meal-preppable toppings are useful.",
 };
 
 /** Turn the structured request plus what is on hand into the user-turn prompt. */

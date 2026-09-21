@@ -1,60 +1,126 @@
 /**
  * Your taste, as code.
  *
- * This used to be an editable settings page. It lives here instead because it
- * changes rarely and is easier to version than to re-type — edit this file and
- * every suggestion changes.
+ * Condensed from the long profile you had built up in ChatGPT. Three kinds of
+ * thing came out of that document, and they are deliberately kept apart:
+ *
+ *   1. Taste and technique — the prose below. Irreplaceable, and the reason
+ *      suggestions sound like you rather than like a recipe site.
+ *   2. Facts — dislikes, equipment, staples. These are structured fields, so
+ *      they are stated as rules instead of hoping the model notices a line in
+ *      the middle of a paragraph.
+ *   3. Instructions to ChatGPT about formatting and conversation — dropped.
+ *      This app enforces the format through a response schema, does the
+ *      scaling arithmetic itself, and is not a chat, so that material was
+ *      taking up room without changing anything.
+ *
+ * Edit this file and every suggestion changes.
  */
 
 import type { TasteProfile } from "./schema";
 
-/**
- * The long-form context: what you like, how you eat, what you reach for.
- *
- * ▸ REPLACE THIS with the summary from your ChatGPT thread. Everything below
- *   works without it, but this is the single biggest lever on output quality —
- *   it is the difference between a generic recipe site and your recipe bot.
- */
 export const TASTE_SUMMARY = `
-I cook mostly Indian and Mediterranean food on weeknights. I like bold, sour and
-spiced flavours — tamarind, lime, amchoor, sumac, pickled and fermented things.
-I would rather have one assertive flavour than five polite ones.
+Food should taste like someone seasoned it on purpose. Build flavour in layers:
+aromatics, then spices bloomed in fat, then something savoury and deep, then
+acid, then heat, then a fresh finish. Do not just combine ingredients and call
+it a recipe — roast or brown the garlic and mushrooms properly, crisp the tofu
+instead of leaving it watery, finish curries and soups with lime or lemon, and
+season vegetables rather than leaving them plain. When I say I want something
+to taste good I mean assertive seasoning, real salt, umami, acidity, heat and
+texture, and sauces that are not watered down.
 
-I batch cook on Sundays and eat leftovers cold or barely reheated, so dishes
-need to hold up for several days without going soggy or dull.
+I cook Indian, Indo-Chinese, Thai, Korean-leaning, Mexican-leaning and Italian
+food. Dal, masala khichdi, pav bhaji, Manchurian, pad kra pao, gochujang
+noodles, dumpling soup, fried rice, pesto pasta, stuffed shells, roasted
+potatoes. Rotate between these rather than making everything Asian — especially
+tofu, which does not have to mean a stir-fry.
 
-Weeknight cooking is 30-40 minutes, one pan where possible. I do not enjoy
-sweet savoury dishes.
+Vegetables should feel integrated — roasted, browned, blended into a sauce,
+folded into fried rice or curry — not a pile of plain veg next to a protein.
+Frozen vegetables are genuinely fine; give instructions that suit them.
+
+Proteins: chicken breast and ground chicken (brown it before liquid goes in),
+tofu (extra-firm, pressed, crisped, and seasoned itself rather than relying on
+sauce), paneer, cottage cheese, shrimp (often only five or six, added at the
+very end), salmon (season it hard — mustard, spice, marinade, acid — so it does
+not taste aggressively of salmon).
+
+I eat calorie-consciously but never at the cost of flavour. Cut calories
+through cooking method, portioning and balance, not by making food bland. Rice,
+bread, pasta, potatoes and tortillas are all fine in sensible portions. Do not
+moralise about food or label it good or bad, and do not bring up calories
+unless I ask.
+
+Most of what I cook is meal prep, usually three servings, eaten over three or
+four days. It has to still have decent texture after reheating, and it should
+not require five separate components when one dish would do. Say when something
+is better made fresh.
+
+Breakfast is two slices of sourdough, cottage cheese and a seed mix. Savoury,
+fast, before work. Roasted tomatoes, mushrooms, herbs or chilli crisp on top
+are welcome. Never suggest eggs unless I ask for them.
+
+The test for any suggestion: would I actually be excited to eat this, and would
+I still want the leftovers on day three?
 `.trim();
 
 /**
  * Hard dietary rules.
  *
- * These are not preferences. They are stated to the model as absolute
- * constraints, separately from the summary above, because a model asked to
- * "bear preferences in mind" will happily write its way past a rule buried in
- * a paragraph of prose.
+ * Stated to the model as absolute constraints, separately from the prose above,
+ * because a model asked to "bear preferences in mind" will write its way past a
+ * rule buried in a paragraph.
  */
 export const DIETARY_RULES: string[] = [
-  "Never use beef or pork as an ingredient. This includes veal, lamb-and-beef mixes, bacon, ham, pancetta, chorizo, prosciutto and sausages made from either.",
+  "Never use beef or pork as an ingredient. This includes veal, bacon, ham, pancetta, guanciale, chorizo, prosciutto and sausages made from either.",
   "The only seafood allowed is shrimp/prawns and salmon. Never use any other fish or shellfish as an ingredient — no cod, tuna, anchovy fillets, squid, mussels, crab or scallops.",
-  "Derived flavourings and condiments ARE fine even when they come from the animals above: fish sauce, shrimp paste, oyster sauce, Worcestershire sauce, bonito-based dashi, lard and gelatine are all acceptable. The rule is about what goes in as an ingredient, not about trace sources in a bottle.",
-  "Chicken, lamb, goat, eggs and dairy are all fine.",
+  "Derived flavourings and condiments ARE fine even when they come from the animals above: fish sauce, shrimp paste, oyster sauce, Worcestershire sauce, bonito dashi, lard and gelatine are all acceptable. The rule is about what goes in as an ingredient, not trace sources in a bottle.",
+  "Chicken, lamb, goat, eggs, dairy, tofu and paneer are all fine.",
 ];
 
-/** Things that must never appear. Add allergies here. */
+/** Allergies. Nothing stated — add here if that changes. */
 export const NEVER_INCLUDE: string[] = [];
 
-/** Avoided unless explicitly asked for. */
-export const PREFER_TO_AVOID: string[] = ["raw tomato"];
+/** Avoided unless the request explicitly asks for them. */
+export const PREFER_TO_AVOID: string[] = [
+  "zucchini",
+  "corn",
+  "stuffed vegetables",
+  "bell peppers (never add them by default; occasional deliberate use is fine)",
+  "heavy or very creamy dishes",
+  "beans as the bulk of a dinner",
+  "eggs at breakfast",
+];
 
-export const SPICE_LEVEL: TasteProfile["spiceLevel"] = "medium";
+/** Spicy food is a stated preference, not a tolerance. */
+export const SPICE_LEVEL: TasteProfile["spiceLevel"] = "hot";
 
 export const EQUIPMENT: string[] = [
-  "gas hob",
-  "oven",
-  "blender",
-  "food processor",
+  "air fryer (preferred for potatoes, fries, kebabs, tofu)",
+  "Instant Pot (preferred for rice, dal, khichdi, pav bhaji)",
+  "oven (preferred for salmon and roasted vegetables)",
+  "stove",
+  "grill pan",
+  "immersion blender (preferred for soups and sauces)",
+];
+
+/** Reach for these first. */
+export const FAVOURITES: string[] = [
+  "broccoli", "green beans (frozen fine)", "mushrooms", "onions",
+  "tomatoes and cherry tomatoes", "carrots", "spinach", "cabbage",
+  "edamame", "tofu", "cottage cheese", "paneer", "chicken", "ground chicken",
+  "shrimp", "salmon", "potatoes", "rice", "pasta", "roti, tortillas, naan",
+  "dumplings", "noodles",
+];
+
+/** Usually in the cupboard, so a recipe may assume them. */
+export const PANTRY_STAPLES: string[] = [
+  "soy sauce", "oyster sauce", "gochujang", "chilli sauces", "Thai chillies",
+  "ginger", "garlic or ginger-garlic paste", "tomato paste", "crushed tomatoes",
+  "chicken bouillon", "yogurt", "cottage cheese", "tahini", "sesame seeds",
+  "chilli powder", "turmeric", "garam masala", "curry powder",
+  "pav bhaji masala", "Dijon mustard", "parmesan", "mozzarella", "gruyère",
+  "frozen vegetables",
 ];
 
 /** Assembled profile, used by the prompt builder. */
@@ -65,4 +131,6 @@ export const TASTE: TasteProfile = {
   dislikes: PREFER_TO_AVOID,
   spiceLevel: SPICE_LEVEL,
   equipment: EQUIPMENT,
+  favourites: FAVOURITES,
+  staples: PANTRY_STAPLES,
 };

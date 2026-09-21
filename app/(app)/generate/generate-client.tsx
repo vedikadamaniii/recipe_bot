@@ -19,6 +19,7 @@ const INTENTS = [
   { id: "comfort", label: "Comfort" },
   { id: "light", label: "Light" },
   { id: "one-pot", label: "One pot" },
+  { id: "breakfast", label: "Breakfast" },
   { id: "budget", label: "Budget" },
 ];
 

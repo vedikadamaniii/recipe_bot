@@ -85,6 +85,10 @@ export type TasteProfile = {
   dislikes: string[];
   spiceLevel?: "mild" | "medium" | "hot" | null;
   equipment: string[];
+  /** Ingredients to reach for first. */
+  favourites?: string[];
+  /** Usually in the cupboard, so recipes may assume them. */
+  staples?: string[];
 };
 
 /** Cuisines offered as browse filters. Free text is still allowed. */
