@@ -4,6 +4,17 @@ import { Knife } from "@/components/ornaments";
 import { ImportClient } from "./import-client";
 
 /**
+ * Never prerender this page.
+ *
+ * It depends on the unlock cookie and on a counter that changes through the
+ * day, so a build-time render would freeze both. Without this the lock check
+ * runs at build time, when there is no cookie, and the page stays locked even
+ * for the owner. Next cannot infer this reliably here, because isUnlocked()
+ * short-circuits before touching cookies() when no password is configured.
+ */
+export const dynamic = "force-dynamic";
+
+/**
  * Adding a recipe costs API quota, so it is owner-only. Visitors still see the
  * page rather than a hidden nav item: a feature nobody knows exists may as
  * well not have been built.
