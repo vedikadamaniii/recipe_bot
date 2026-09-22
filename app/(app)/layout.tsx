@@ -1,17 +1,13 @@
 import Link from "next/link";
 import { Bowl, Knife, Sprig, Whisk } from "@/components/ornaments";
-import { isUnlocked } from "@/lib/access";
 
 const NAV = [
-  { href: "/generate", label: "Cook", icon: Whisk, ownerOnly: false },
-  { href: "/library", label: "Library", icon: Bowl, ownerOnly: false },
-  { href: "/import", label: "Add", icon: Knife, ownerOnly: true },
+  { href: "/generate", label: "Cook", icon: Whisk },
+  { href: "/library", label: "Library", icon: Bowl },
+  { href: "/import", label: "Add", icon: Knife },
 ];
 
-export default async function AppLayout({ children }: LayoutProps<"/">) {
-  const unlocked = await isUnlocked();
-  const nav = NAV.filter((item) => unlocked || !item.ownerOnly);
-
+export default function AppLayout({ children }: LayoutProps<"/">) {
   return (
     <>
       <header className="sticky top-0 z-20 bg-cream/95 backdrop-blur border-b border-mist">
@@ -23,7 +19,7 @@ export default async function AppLayout({ children }: LayoutProps<"/">) {
             <span className="display text-xl">Recipe Bot</span>
           </Link>
           <nav className="flex-1 flex items-center justify-end gap-1 text-sm">
-            {nav.map(({ href, label, icon: Icon }) => (
+            {NAV.map(({ href, label, icon: Icon }) => (
               <Link
                 key={href}
                 href={href}
