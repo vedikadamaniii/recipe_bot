@@ -101,8 +101,25 @@ export function ImportClient() {
     (mode === "text" && text.trim().length > 20) ||
     (mode === "image" && shots.length > 0);
 
+  /**
+   * Clear the whole form.
+   *
+   * "Add another" used to be a link to /import, the page it was already on,
+   * so React kept the component mounted with its "Saved" state and clicking
+   * it did nothing at all.
+   */
+  function startOver() {
+    setDraft(null);
+    setUrl("");
+    setText("");
+    setShots([]);
+    setError("");
+  }
+
   if (draft) {
-    return <ReviewDraft draft={draft} onBack={() => setDraft(null)} />;
+    return (
+      <ReviewDraft draft={draft} onBack={() => setDraft(null)} onStartOver={startOver} />
+    );
   }
 
   return (
@@ -276,7 +293,15 @@ export function ImportClient() {
  * library full of silently wrong quantities is worse than no library — so
  * nothing is saved until it has been looked at.
  */
-function ReviewDraft({ draft, onBack }: { draft: DraftRecipe; onBack: () => void }) {
+function ReviewDraft({
+  draft,
+  onBack,
+  onStartOver,
+}: {
+  draft: DraftRecipe;
+  onBack: () => void;
+  onStartOver: () => void;
+}) {
   const [title, setTitle] = useState(draft.title);
   const [cuisine, setCuisine] = useState(draft.cuisine);
   const [servings, setServings] = useState(draft.baseServings);
@@ -321,9 +346,9 @@ function ReviewDraft({ draft, onBack }: { draft: DraftRecipe; onBack: () => void
           <Link href={`/recipe/${savedId}`} className="btn btn-primary">
             Open it
           </Link>
-          <Link href="/import" className="btn btn-quiet">
+          <button onClick={onStartOver} className="btn btn-quiet">
             Add another
-          </Link>
+          </button>
         </div>
       </div>
     );
