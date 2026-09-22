@@ -12,7 +12,7 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 export const UNLOCK_COOKIE = "recipe-bot-unlock";
 
 /** How many live generations visitors share per day. */
-export const VISITOR_DAILY_CAP = Number(process.env.VISITOR_DAILY_CAP ?? 15);
+export const VISITOR_DAILY_CAP = Number(process.env.VISITOR_DAILY_CAP ?? 20);
 
 function secret(): string {
   const value = process.env.APP_PASSWORD;
