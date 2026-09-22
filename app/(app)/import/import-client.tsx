@@ -124,11 +124,7 @@ export function ImportClient() {
 
   return (
     <div className="max-w-xl">
-      <h1 className="display text-5xl mb-2">Add a recipe</h1>
-      <p className="text-bark mb-7 leading-relaxed">
-        However it reaches you, it ends up in the same structured form, so it
-        scales and converts like everything else.
-      </p>
+      <h1 className="display text-5xl mb-7">Add a recipe</h1>
 
       <div className="flex gap-2 mb-5">
         {MODES.map((m) => (
