@@ -134,3 +134,77 @@ export function SectionHeading({
     </h2>
   );
 }
+
+/** A mushroom: domed cap over a short stem. */
+export function Mushroom({ size = 20, className }: IconProps) {
+  return (
+    <svg {...base(size)} className={className}>
+      <path d="M2.8 11.6C2.8 6.9 6.9 3 12 3s9.2 3.9 9.2 8.6c0 .9-.8 1.6-1.8 1.6H4.6c-1 0-1.8-.7-1.8-1.6Z" />
+      <path d="M9 13.2v5.6c0 1.6 1.3 2.9 3 2.9s3-1.3 3-2.9v-5.6" />
+      <path d="M8.4 8.6c.9-.9 2.2-1.4 3.6-1.4" />
+    </svg>
+  );
+}
+
+/** A garlic bulb: cloves fanning out from a stem. */
+export function Garlic({ size = 20, className }: IconProps) {
+  return (
+    <svg {...base(size)} className={className}>
+      <path d="M12 5.6c4 0 6.9 4 6.9 8.4 0 4-3 7-6.9 7s-6.9-3-6.9-7c0-4.4 2.9-8.4 6.9-8.4Z" />
+      <path d="M12 5.6V2.6" />
+      <path d="M8.3 14c0-3.6 1.6-8.4 3.7-8.4s3.7 4.8 3.7 8.4" />
+    </svg>
+  );
+}
+
+/** An aubergine: bulbous body under a leafy calyx. */
+export function Aubergine({ size = 20, className }: IconProps) {
+  return (
+    <svg {...base(size)} className={className}>
+      <path d="M16.6 7.2c2.9 2 3.6 6.3 1.5 9.6-2.1 3.4-6.5 4.8-9.8 3.2-3-1.5-3.9-5.2-2-8.4 2-3.4 6.5-5.4 10.3-4.4Z" />
+      <path d="M14.8 6.2c-.7-1.6 0-3.4 1.6-4.2M16.6 7.2c1.6-.8 3.5-.2 4.4 1.3" />
+    </svg>
+  );
+}
+
+/** An onion: layered bulb with two shoots. */
+export function Onion({ size = 20, className }: IconProps) {
+  return (
+    <svg {...base(size)} className={className}>
+      <path d="M12 5.8c4.3 0 7.6 3.7 7.6 8.1s-3.3 8.1-7.6 8.1-7.6-3.7-7.6-8.1S7.7 5.8 12 5.8Z" />
+      <path d="M8.2 13.9c0-3.9 1.7-8.1 3.8-8.1s3.8 4.2 3.8 8.1" />
+      <path d="M12 5.8c-1.1-1.7-.8-3.5.8-4.6M12 5.8c.8-2 2.4-2.9 4.4-2.6" />
+    </svg>
+  );
+}
+
+/** A tomato: round body with a star calyx. */
+export function Tomato({ size = 20, className }: IconProps) {
+  return (
+    <svg {...base(size)} className={className}>
+      <circle cx="12" cy="14.4" r="7.4" />
+      <path d="M12 7V3.6" />
+      <path d="M12 7C9.9 5.5 7.4 5.6 5.7 7.3 7.4 9 9.9 9.1 12 7Z" />
+      <path d="M12 7c2.1-1.5 4.6-1.4 6.3.3-1.7 1.7-4.2 1.8-6.3-.3Z" />
+    </svg>
+  );
+}
+
+/**
+ * A row of ingredients and tools, used once per page as the only decorative
+ * element. Kept to a single band rather than scattered through the layout:
+ * repeated ornamentation reads as filler, one arrangement reads as a choice.
+ */
+export function StillLife({ className = "" }: { className?: string }) {
+  const pieces = [Onion, Mushroom, Chilli, Aubergine, Garlic, Tomato, Whisk, Knife];
+  return (
+    <div
+      className={`flex items-end gap-4 sm:gap-6 text-bark/45 ${className}`}
+      aria-hidden
+    >
+      {pieces.map((Piece, i) => (
+        <Piece key={i} size={i % 2 === 0 ? 40 : 34} />
+      ))}
+    </div>
+  );
+}

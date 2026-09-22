@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import type { DraftRecipe, Recipe } from "@/lib/schema";
 import { COMMON_CUISINES } from "@/lib/schema";
 import { RecipeMeta, RecipeView } from "@/components/recipe-view";
-import { Citrus, Fork, SectionHeading, Whisk } from "@/components/ornaments";
+import { Citrus, Fork, SectionHeading, StillLife, Whisk } from "@/components/ornaments";
 import { HAVE_STORAGE_KEY, readHave } from "@/lib/have";
 import { saveGenerated } from "./actions";
 
@@ -102,17 +102,18 @@ export function GenerateClient({
 
   return (
     <div>
-      <h1 className="display text-5xl mb-8">What are you cooking?</h1>
+      <h1 className="display text-5xl mb-5">What are you cooking?</h1>
+      <StillLife className="mb-8" />
 
       <div className="card p-5 mb-6">
-        <SectionHeading icon={<Citrus />}>Fridge and pantry</SectionHeading>
+        <SectionHeading icon={<Citrus />}>What do you have in the fridge</SectionHeading>
         <textarea
           value={have}
           onChange={(e) => persistHave(e.target.value)}
           rows={4}
           className="field mb-3"
           placeholder={"red lentils, spinach, greek yogurt\n2 onions\n400g canned tomatoes"}
-          aria-label="What is in your fridge and pantry"
+          aria-label="What do you have in the fridge"
         />
         {haveCount > 0 && (
           <label className="flex items-center gap-2 text-sm text-bark">
