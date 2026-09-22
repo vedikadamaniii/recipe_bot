@@ -1,5 +1,7 @@
 import { isUnlocked } from "@/lib/access";
-import { lock, unlock } from "./actions";
+
+/** Reads the unlock cookie, so it must never be prerendered. */
+export const dynamic = "force-dynamic";
 
 export default async function UnlockPage({ searchParams }: PageProps<"/unlock">) {
   const params = await searchParams;
@@ -13,9 +15,9 @@ export default async function UnlockPage({ searchParams }: PageProps<"/unlock">)
         <p className="text-bark leading-relaxed mb-6">
           This device can generate, import and save.
         </p>
-        <form action={lock}>
-          <button className="btn btn-quiet">Lock this device</button>
-        </form>
+        <a href="/api/unlock" className="btn btn-quiet">
+          Lock this device
+        </a>
       </div>
     );
   }
@@ -27,7 +29,7 @@ export default async function UnlockPage({ searchParams }: PageProps<"/unlock">)
         Generating, importing and saving are limited to the owner. Everything
         else is open to read.
       </p>
-      <form action={unlock}>
+      <form action="/api/unlock" method="post">
         <label htmlFor="password" className="block text-sm text-bark mb-1">
           Password
         </label>
