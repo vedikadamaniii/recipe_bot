@@ -105,14 +105,14 @@ export function GenerateClient({
       <h1 className="display text-5xl mb-8">What are you cooking?</h1>
 
       <div className="card p-5 mb-6">
-        <SectionHeading icon={<Citrus />}>What you have in</SectionHeading>
+        <SectionHeading icon={<Citrus />}>Fridge and pantry</SectionHeading>
         <textarea
           value={have}
           onChange={(e) => persistHave(e.target.value)}
           rows={4}
           className="field mb-3"
           placeholder={"red lentils, spinach, greek yogurt\n2 onions\n400g canned tomatoes"}
-          aria-label="What you have in the kitchen"
+          aria-label="What is in your fridge and pantry"
         />
         {haveCount > 0 && (
           <label className="flex items-center gap-2 text-sm text-bark">
