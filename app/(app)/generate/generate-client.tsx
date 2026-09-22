@@ -102,10 +102,7 @@ export function GenerateClient({
 
   return (
     <div>
-      <h1 className="display text-5xl mb-2">What are you cooking?</h1>
-      <p className="text-bark mb-8 leading-relaxed max-w-prose">
-        Three ideas, built around whatever is in there.
-      </p>
+      <h1 className="display text-5xl mb-8">What are you cooking?</h1>
 
       <div className="card p-5 mb-6">
         <SectionHeading icon={<Citrus />}>What you have in</SectionHeading>
