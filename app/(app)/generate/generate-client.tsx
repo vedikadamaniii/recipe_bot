@@ -43,6 +43,7 @@ export function GenerateClient({
   const [intents, setIntents] = useState<string[]>([]);
   const [cuisine, setCuisine] = useState("");
   const [centerpiece, setCenterpiece] = useState("");
+  const [exclude, setExclude] = useState("");
   const [onlyWhatIHave, setOnlyWhatIHave] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -85,6 +86,7 @@ export function GenerateClient({
           centerpiece: centerpiece || null,
           have: toList(have),
           useOnlyWhatIHave: onlyWhatIHave,
+          exclude: toList(exclude),
         }),
       });
       const data = await res.json();
@@ -99,6 +101,7 @@ export function GenerateClient({
   }
 
   const haveCount = toList(have).length;
+  const excludeCount = toList(exclude).length;
 
   return (
     <div>
@@ -177,6 +180,27 @@ export function GenerateClient({
             />
           </label>
         </div>
+
+        {/*
+          A one-off exclusion, not a standing dislike. "No pasta tonight" is a
+          mood, and writing it into the taste profile would mean never being
+          offered pasta again.
+        */}
+        <label className="block mb-5">
+          <span className="block text-sm text-bark mb-1">Not today</span>
+          <input
+            value={exclude}
+            onChange={(e) => setExclude(e.target.value)}
+            className="field"
+            placeholder="pasta, anything with coconut"
+          />
+          {excludeCount > 0 && (
+            <span className="block text-fade text-xs mt-1.5">
+              Leaving out {excludeCount} {excludeCount === 1 ? "thing" : "things"} this time.
+              Nothing is saved.
+            </span>
+          )}
+        </label>
 
         <button onClick={generate} className="btn btn-primary" disabled={loading}>
           <Whisk size={17} />
